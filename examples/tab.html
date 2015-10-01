@@ -1,0 +1,93 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tabs Example</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../domi.js"></script>
+</head>
+<body>
+    <style type="text/css">
+
+        .container {
+            position: absolute;
+            width: 280px;
+            height: 150px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            line-height: 0;
+            font-size: 0;          
+        }
+        .js-tab {
+            float:left;
+            width: 70px;
+            height: 50px;
+            border-radius: 20px;
+
+        }
+
+        .js-tab[data-group-id="1"] {
+            background-color: #ff0066;
+            border-bottom: 5px solid #FFB2D1;
+        }
+
+        .js-tab[data-group-id="2"] {
+            background-color: #5f5f5f;
+            border-bottom: 5px solid #2d2d2d;
+        }
+
+        .active .js-tab {
+            background-color: #ffffff;
+        }
+
+        .tab-content {
+            opacity: 0;
+            transition: opacity 300ms;
+            float:left;
+            width: 70px;
+            height: 50px;
+            border-radius: 20px;
+        }
+
+        #tab-content-1 {
+            background-color: #00ff66;
+            border-bottom: 5px solid #00dd33;
+        }
+        #tab-content-2 {
+            background-color: #ff00ff;
+            border-bottom: 5px solid #dd00dd;
+        }
+        #tab-content-3 {
+            background-color: #6f06f6;
+            border-bottom: 5px solid #3d03d3;
+        }
+        #tab-content-4 {
+            background-color: #ffff00;
+            border-bottom: 5px solid #dddd00;
+        }
+
+        .tab-content.active {
+            opacity: 1;
+        }
+
+
+    </style>
+    <div class="container">
+        <div class="tabs">
+            <div class="js-tab" data-group-id="1" data-target="#tab-content-1" data-toggle-class="active"></div>
+            <div class="js-tab" data-group-id="1" data-target="#tab-content-2" data-toggle-class="active"></div>
+            <div class="js-tab" data-group-id="2" data-target="#tab-content-3" data-toggle-class="active"></div>
+            <div class="js-tab" data-group-id="2" data-target="#tab-content-4" data-toggle-class="active"></div>
+        </div>
+        <div class="tab-contents">
+            <div class="tab-content" id="tab-content-1"></div>
+            <div class="tab-content" id="tab-content-2"></div>
+            <div class="tab-content" id="tab-content-3"></div>
+            <div class="tab-content" id="tab-content-4"></div>            
+        </div>
+    </div>
+</body>
+</html>

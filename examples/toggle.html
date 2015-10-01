@@ -1,0 +1,57 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Toggle Button Example</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../domi.js"></script>
+</head>
+<body>
+    <style type="text/css">
+        .container {
+            position: absolute;
+            width: 280px;
+            height: 50px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            line-height: 0;
+            font-size: 0;          
+        }
+
+        .js-toggle {
+            float:left;
+            width: 140px;
+            height: 50px;
+            background-color: #ff0066;
+            border-radius: 20px;
+            border-bottom: 5px solid #FFB2D1;
+        }
+
+        .js-toggle:active {
+            border: none;
+            top: 5px;
+        }
+
+        .js-toggle.js--active {
+            background-color: #ffffff;
+        }
+
+        body {
+            transition: background-color 300ms;
+        }
+
+        body.active {
+            background-color: #ff0066;
+        }
+
+
+    </style>
+    <div class="container">
+        <div class="js-toggle" data-target="body" data-toggle-class="active"></div>
+        <div class="js-toggle" data-target="body" data-toggle-class="active"></div>
+    </div>
+</body>
+</html>
