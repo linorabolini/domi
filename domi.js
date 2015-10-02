@@ -21,7 +21,7 @@
 
         // base element toggle function
 
-        function toggle($element, status) {
+        function toggle ($element, status) {
             var targetData = $element.attr(_attrTarget);
             var classData  = $element.attr(_attrToggleClass);
 
@@ -29,6 +29,15 @@
 
             var query = '[' + _attrTarget + '="' + targetData + '"]['+ _attrToggleClass +'="'+ classData +'"]';
             $(query).toggleClass(_statusActive, status);
+        }
+
+        function toggleByGroupId(_selector, $element, status) {
+            var groupId = $element.attr(_attrGroupId);
+            if(!groupId) return;
+            
+            $(_selector + '[' + _attrGroupId + '=' + groupId +']').each(function() {
+                toggle($(this), status);
+            });
         }
 
         // js-tab
@@ -42,16 +51,9 @@
             var status = $this.hasClass(_statusActive);
 
             if(!status) {
-                var tabId = $this.attr(_attrGroupId);
-                if(!tabId) {
-                    return;
-                } else {
-                    $(_elTab + '[' + _attrGroupId + '=' + tabId +']').each(function() {
-                        toggle($(this), false);
-                    });
-                }
+                toggleByGroupId(_elTab, $this, false);
+                toggle($this, !status);
             }
-            toggle($this, !status);
         });
 
         // js-toggle
@@ -65,6 +67,7 @@
             var $this  = $(this);
             var status = $this.hasClass(_statusActive);
 
+            toggleByGroupId(_elToggle, $this, false);
             toggle($this, !status);
         });
 
