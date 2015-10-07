@@ -1,0 +1,66 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Toggle Button Example</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../domi.js"></script>
+</head>
+<body>
+    <style type="text/css">
+        .container {
+            position: absolute;
+            max-width: 800px;
+            height: 150px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 50px;
+            margin: auto;
+            line-height: 0;
+            font-size: 0;          
+        }
+
+        .js-overflow-box {
+            overflow: auto;
+            padding: 10px;
+            background: #f1f1f1;
+            border: 1px solid #c3c3c3;
+        }
+        #overflow-container {
+            margin-top: 50px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            overflow: auto;
+            border: 1px solid #c3c3c3;
+        }
+
+        .square {
+            width: 150px;
+            padding: 25px 0;
+            display: inline-block;
+            background-color: #999;
+            border: 1px solid #666;
+            text-align: center;
+            font-weight: bold;
+            color: #f1f1f1;
+            font-size: 16px;
+        }
+
+        div#overflow-container .square {
+            background-color: rebeccapurple;
+        }
+    </style>
+    <div class="container">
+        <div class="js-overflow-box" data-target="#overflow-container">
+            <div class="square">1</div>
+            <div class="square">2</div>
+            <div class="square">3</div>
+            <div class="square">4</div>
+            <div class="square">5</div>
+        </div>
+        <div id="overflow-container"></div>
+    </div>
+</body>
+</html>

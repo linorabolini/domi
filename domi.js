@@ -9,8 +9,9 @@
 }(function ($) {
     $(function() {
         var _elPrefix        = ".js-";
-        var _elToggle        = _elPrefix + 'toggle';
         var _elTab           = _elPrefix + 'tab';
+        var _elToggle        = _elPrefix + 'toggle';
+        var _elOverflowBox   = _elPrefix + 'overflow-box';
         var _elScrollTrigger = _elPrefix + 'scroll-trigger';
         var _attrPrefix      = "data-";
         var _attrTarget      = _attrPrefix + "target";
@@ -70,6 +71,60 @@
             toggleByGroupId(_elToggle, $this, false);
             toggle($this, !status);
         });
+
+        // js-overflow-box
+        // 
+        // usage:
+        // 
+        // <div class="js-overflow-box" data-target="body">
+        //
+
+
+        $(_elOverflowBox).each(function(){
+            var $this = $(this);
+            $this.data('children', $this.children());
+        });
+
+        function checkOverflowBoxes() {
+            $(_elOverflowBox).each(function(){
+                var $container = $(this);
+                var containerWidth = $container.width();
+                var targetData = $container.attr(_attrTarget);
+                var tmpWidth = 0;
+
+                var children = $container.data('children');
+                
+                $.each(children, function (i, el) {
+                    var $el = $(el);
+                    var elWidth = $el.outerWidth(true);
+
+                    if(tmpWidth + elWidth < containerWidth) {
+                        tmpWidth += elWidth;
+                        if($el.parent()[0] == $container[0]) {
+                            return
+                        } else {
+                            $container.append($el);
+                        }
+                    } else {
+                        if($el.parent()[0] == $container[0]) {
+                            if(targetData) {
+                                $(targetData).append($el);
+                            } else {
+                                $el.remove();
+                            }
+                        } else {
+                            return false
+                        }
+                    }
+                })
+
+            });
+        }
+
+        if($(_elOverflowBox).length) {
+            $(window).resize(checkOverflowBoxes);
+            checkOverflowBoxes();
+        }
 
         // scroll triggers 
         // 
