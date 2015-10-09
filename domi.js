@@ -17,6 +17,7 @@
         var _attrTarget      = _attrPrefix + "target";
         var _attrToggleClass = _attrPrefix + "toggle-class";
         var _attrGroupId     = _attrPrefix + "group-id";
+        var _attrPriority     = _attrPrefix + "priority";
         var _statusPrefix    = "js--";
         var _statusActive    = _statusPrefix + "active";
 
@@ -82,7 +83,45 @@
 
         $(_elOverflowBox).each(function(){
             var $this = $(this);
-            $this.data('children', $this.children());
+            var children = $this.children();
+            var i;
+            var c;
+            var $current;
+            var $min;
+            var $max;
+            var $tmp;
+            var priority;
+            var tmpPriority;
+            var pA;
+            var pB;
+
+            children.each(function(i, el){
+                $current = $(el);
+                $current.attr(_attrPriority, $current.attr(_attrPriority) || 0);
+
+                $min = null;
+                priority = $current.attr(_attrPriority);
+
+                for (c = i - 1; c >= 0; c--) {
+                    $tmp = $(children[c]);
+                    tmpPriority = $tmp.attr(_attrPriority);
+
+                    if (!$min && tmpPriority <= priority){
+                        $min = $tmp;
+                    }
+                };
+
+                $current.data('data-left-node', $min);
+            });
+
+            var priorityList = children.sort(function(a, b) {
+                pA = $(a).attr(_attrPriority);
+                pB = $(b).attr(_attrPriority);
+
+                return pA - pB;
+            });
+            
+            $this.data('children', priorityList);
         });
 
         function checkOverflowBoxes() {
@@ -103,7 +142,12 @@
                         if($el.parent()[0] == $container[0]) {
                             return
                         } else {
-                            $container.append($el);
+                            var target = $el.data('data-left-node');
+                            if(!target) {
+                                $container.prepend($el);
+                            } else {
+                                $el.insertAfter(target);
+                            }
                         }
                     } else {
                         if($el.parent()[0] == $container[0]) {

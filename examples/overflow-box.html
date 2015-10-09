@@ -54,11 +54,11 @@
     </style>
     <div class="container">
         <div class="js-overflow-box" data-target="#overflow-container">
-            <div class="square">1</div>
-            <div class="square">2</div>
-            <div class="square">3</div>
-            <div class="square">4</div>
-            <div class="square">5</div>
+            <div class="square" data-priority="100">first to go</div>
+            <div class="square">dummy</div>
+            <div class="square">dummy 2</div>
+            <div class="square">dummy 3</div>
+            <div class="square" data-priority="-100">last to go</div>
         </div>
         <div id="overflow-container"></div>
     </div>
