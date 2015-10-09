@@ -36,7 +36,10 @@ Serve a simple set of Dom configurable elements in a compact Jquery addon.
 Some elements are more important than others ? no worries! It supports priorities.
 
 ```html
-<div class="js-overflow-box" data-target="body">
-  <div data-priority="1">some element with an optional priority</div>
+<div class="js-overflow-box" data-target="#storage">
+  <div data-priority="5">this one will be removed first</div>
+  <div>some element with no priority. The default is 0</div>
 </div>
+
+<div id="storage">Here is where the elements will be stored.</div>
 ```
