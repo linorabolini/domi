@@ -65,6 +65,7 @@
             }
 
             $.each(filters, function(i, filter){
+                if(!filter) return;
                 query = query && query[filter]();
             });
 
