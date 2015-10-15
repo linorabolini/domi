@@ -34,9 +34,10 @@
             var classData  = getToggleClass($domiEl);
 
             $target.toggleClass(classData, status);
+            $domiEl.toggleClass(_statusActive, status);
 
             var registeredElements = getRegisteredElements(_selector, $target);
-            $.each(registeredElements, function(i, $el) {
+            registeredElements && $.each(registeredElements, function(i, $el) {
                 if(classData == getToggleClass($el)) {
                     $el.toggleClass(_statusActive, status);
                 }
@@ -93,18 +94,24 @@
         }
 
         function registerToTarget(type, $domiEl, $target) {
-            var data = $target.data();
-            data['domi'] = data['domi'] || {};
-            data['domi'][type] = data['domi'][type] || [];
+            $target.each(function(i, el){
+                var $el = $(el);
+                var data = $el.data('domi') || {};
+                data[type] = data[type] || [];
 
-            // add the element to the list
-            data['domi'][type].push($domiEl);
-            $target.data('domi', data['domi']);
+                // add the element to the list
+                data[type].push($domiEl);
+                $el.data('domi', data);
+            })
+
         }
 
         function getRegisteredElements(type, $target) {
-            var data = $target.data();
-            return data['domi'][type];
+            var data = $target.data('domi');
+            if(!data) {
+                console.warn("no data was stored, element registration failed?");
+            }
+            return data && data[type];
         }
 
         // js-tab
