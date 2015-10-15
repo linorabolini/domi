@@ -10,8 +10,8 @@
     <style type="text/css">
         .container {
             position: absolute;
-            max-width: 800px;
-            height: 150px;
+            max-width: 775px;
+            height: 300px;
             top: 0;
             bottom: 0;
             left: 0;
@@ -23,44 +23,70 @@
         }
 
         .js-overflow-box {
+            position: relative;
             overflow: auto;
             padding: 10px;
+            margin-bottom: 50px;
             background: #f1f1f1;
-            border: 1px solid #c3c3c3;
+            border: 1px solid #666;
         }
-        #overflow-container {
-            margin-top: 50px;
+        #target {
+            position:relative;
             padding: 10px;
             background-color: #f2f2f2;
             overflow: auto;
-            border: 1px solid #c3c3c3;
+            border: 1px solid #666;
         }
-
+        
+        .note-box {
+            font-size: 14px;
+            line-height: 1em;
+            color: #333;
+            padding: 10px;
+            margin-bottom: -1px;
+            z-index: 2;
+            position: relative;
+            border: 1px solid #666;
+            background-color: #f2f2f2;
+            display: inline-block;
+            border-bottom: none;
+        }
         .square {
             width: 150px;
             padding: 25px 0;
             display: inline-block;
-            background-color: #999;
-            border: 1px solid #666;
+            background-color: #ff0066;
             text-align: center;
             font-weight: bold;
             color: #f1f1f1;
             font-size: 16px;
         }
 
-        div#overflow-container .square {
-            background-color: rebeccapurple;
+        div#target .square {
+            display:block;
+        }
+
+        xmp {
+            text-align:center;
+            padding: 10px;
+            background: #333;
+            color: #f1f1f1;
+            font-weight: bold;
+            border-bottom: 5px solid #f1f1f1;
         }
     </style>
+    <xmp>data-target="#target"</xmp>
     <div class="container">
-        <div class="js-overflow-box" data-target="#overflow-container">
+        <div class="note-box">.js-overflow-box</div>
+        <div class="js-overflow-box" data-target="#target">
             <div class="square" data-priority="100">first to go</div>
             <div class="square">dummy</div>
             <div class="square">dummy 2</div>
             <div class="square">dummy 3</div>
             <div class="square" data-priority="-100">last to go</div>
         </div>
-        <div id="overflow-container"></div>
+        <div class="note-box">#target</div>
+        <div id="target"></div>
     </div>
 </body>
 </html>

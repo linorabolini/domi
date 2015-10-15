@@ -8,69 +8,82 @@
 </head>
 <body>
     <style type="text/css">
-        .container {
-            color: #000;
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-            border-radius: 10px;
-            transition: all 200ms;
-            background: #f1f1f1;
-            border: 1px solid #999;
-            padding: 10px;
-        }
+    .container {
+        color: #000;
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        border-radius: 10px;
+        transition: all 200ms;
+        background: #f1f1f1;
+        border: 1px solid #999;
+        padding: 10px;
+    }
 
-        .js-toggle {
-            position: absolute;
-            width: 140px;
-            height: 50px;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-            background-color: #ff0066;
-            border-radius: 20px;
-            border-bottom: 5px solid #FFB2D1;
-        }
+    .js-toggle {
+        position: absolute;
+        width: 140px;
+        padding: 25px 0;
+        height: 1px;
+        line-height: 1px;
+        text-align: center;
+        color: #f1f1f1;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        background-color: #ff0066;
+        border-radius: 20px;
+        border-bottom: 5px solid #FFB2D1;
+    }
 
-        .js-toggle:active {
-            border: none;
-            top: 5px;
-        }
+    .js-toggle:active {
+        border: none;
+        top: 5px;
+    }
 
-        .js-toggle.js--active {
-            background-color: #ffffff;
-        }
+    .js-toggle.js--active {
+        background-color: #ffffff;
+        color: #333;
+    }
 
-        body {
-            transition: background-color 300ms;
-        }
+    body {
+        transition: background-color 300ms;
+    }
 
-        .active {
-            background-color: #ff0066;
-        }
+    .active {
+        background-color: #ff0066;
+        color: #f1f1f1;
+    }
+
+    xmp {
+        text-align:center;
+        padding: 10px;
+        background: #333;
+        color: #f1f1f1;
+        font-weight: bold;
+        border-bottom: 5px solid #f1f1f1;
+    }
     </style>
 <!-- 
-    change data-scope to :
+    change data-filters to :
 
-    data-scope="parent"
-    data-scope="parents"
-    data-scope="closest"
-    data-scope="children"
+    All these: https://api.jquery.com/category/traversing/filtering/
 
-    All these: https://api.jquery.com/category/traversing/tree-traversal/
+    comma separated
      -->
+    <xmp>data-target=".container"     data-filters="first"</xmp>
     <div class="container">
-        container 1
+        .container
         <div class="container">
-            container 2
-            <div class="js-toggle" data-target=".container" data-filters="first" data-toggle-class="active"></div>
+            .container
+            <div class="js-toggle" data-target=".container" data-filters="first" data-toggle-class="active">.js-toggle</div>
         </div>
     </div>
 </body>

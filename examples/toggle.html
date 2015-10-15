@@ -8,26 +8,23 @@
 </head>
 <body>
     <style type="text/css">
-        .container {
-            position: absolute;
-            width: 280px;
-            height: 50px;
+        .js-toggle {
+            position:absolute;
             top: 0;
             bottom: 0;
             left: 0;
             right: 0;
             margin: auto;
-            line-height: 0;
-            font-size: 0;          
-        }
-
-        .js-toggle {
-            float:left;
             width: 140px;
             height: 50px;
             background-color: #ff0066;
             border-radius: 20px;
             border-bottom: 5px solid #FFB2D1;
+            padding: 25px 0;
+            height: 1px;
+            line-height: 1px;
+            text-align: center;
+            color: #f1f1f1;
         }
 
         .js-toggle:active {
@@ -37,6 +34,7 @@
 
         .js-toggle.js--active {
             background-color: #ffffff;
+            color: #333;
         }
 
         body {
@@ -47,11 +45,16 @@
             background-color: #ff0066;
         }
 
-
+        xmp {
+            text-align:center;
+            padding: 10px;
+            background: #333;
+            color: #f1f1f1;
+            font-weight: bold;
+            border-bottom: 5px solid #f1f1f1;
+        }
     </style>
-    <div class="container">
-        <div class="js-toggle" data-target="body" data-toggle-class="active"></div>
-        <div class="js-toggle" data-target="body" data-toggle-class="active"></div>
-    </div>
+    <xmp>data-target="body"     data-toggle-class="active"</xmp>
+    <div class="js-toggle" data-target="body" data-toggle-class="active">.js-toggle</div>
 </body>
 </html>

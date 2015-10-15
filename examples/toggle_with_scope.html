@@ -28,7 +28,11 @@
         .js-toggle {
             position: absolute;
             width: 140px;
-            height: 50px;
+            padding: 25px 0;
+            height: 1px;
+            line-height: 1px;
+            text-align: center;
+            color: #f1f1f1;
             top: 0;
             bottom: 0;
             left: 0;
@@ -46,6 +50,7 @@
 
         .js-toggle.js--active {
             background-color: #ffffff;
+            color: #333;
         }
 
         body {
@@ -54,6 +59,16 @@
 
         .active {
             background-color: #ff0066;
+            color: #f1f1f1;
+        }
+
+        xmp {
+            text-align:center;
+            padding: 10px;
+            background: #333;
+            color: #f1f1f1;
+            font-weight: bold;
+            border-bottom: 5px solid #f1f1f1;
         }
     </style>
 <!-- 
@@ -66,11 +81,12 @@
 
     All these: https://api.jquery.com/category/traversing/tree-traversal/
      -->
+     <xmp>data-target=".container"      data-scope="parent"</xmp>
     <div class="container">
-        container 1
+        .container
         <div class="container">
-            container 2
-            <div class="js-toggle" data-target=".container" data-scope="parent" data-toggle-class="active"></div>
+            .container
+            <div class="js-toggle" data-target=".container" data-scope="parent" data-toggle-class="active">.js-toggle</div>
         </div>
     </div>
 </body>

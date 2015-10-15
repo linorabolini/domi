@@ -18,14 +18,15 @@
             left: 0;
             right: 0;
             margin: auto;
-            line-height: 0;
-            font-size: 0;          
         }
         .js-tab {
             float:left;
             width: 70px;
-            height: 50px;
-            border-radius: 20px;
+            height: 1px;
+            line-height: 1px;
+            padding: 40px 0;
+            color: #f1f1f1;
+            text-align: center;
         }
 
         .js--active {
@@ -37,59 +38,65 @@
             border-bottom: 5px solid #FFB2D1;
         }
 
-        .js-tab[data-group-id="2"] {
-            background-color: #5f5f5f;
-            border-bottom: 5px solid #2d2d2d;
-        }
-
         .active .js-tab {
             background-color: #ffffff;
         }
 
-        .tab-content {
+        .tab {
             opacity: 0;
             transition: opacity 300ms;
             float:left;
             width: 70px;
-            height: 50px;
-            border-radius: 20px;
+            height: 1px;
+            line-height: 1px;
+            padding: 25px 0;
+            color: #333;
+            text-align: center;
         }
 
-        #tab-content-1 {
+        #tab-1 {
             background-color: #00ff66;
             border-bottom: 5px solid #00dd33;
         }
-        #tab-content-2 {
+        #tab-2 {
             background-color: #ff00ff;
             border-bottom: 5px solid #dd00dd;
         }
-        #tab-content-3 {
+        #tab-3 {
             background-color: #6f06f6;
             border-bottom: 5px solid #3d03d3;
         }
-        #tab-content-4 {
+        #tab-4 {
             background-color: #ffff00;
             border-bottom: 5px solid #dddd00;
         }
 
-        .tab-content.active {
+        .tab.active {
             opacity: 1;
         }
 
-
+        xmp {
+            text-align:center;
+            padding: 10px;
+            background: #333;
+            color: #f1f1f1;
+            font-weight: bold;
+            border-bottom: 5px solid #f1f1f1;
+        }
     </style>
+    <xmp>data-group-id="1"    data-target="#tab-X"    data-toggle-class="active"</xmp>
     <div class="container">
         <div class="tabs">
-            <div class="js-tab" data-group-id="1" data-target="#tab-content-1" data-toggle-class="active"></div>
-            <div class="js-tab" data-group-id="1" data-target="#tab-content-2" data-toggle-class="active"></div>
-            <div class="js-tab" data-group-id="1" data-target="#tab-content-3" data-toggle-class="active"></div>
-            <div class="js-tab" data-group-id="1" data-target="#tab-content-4" data-toggle-class="active"></div>
+            <div class="js-tab" data-group-id="1" data-target="#tab-1" data-toggle-class="active">.js-tab</div>
+            <div class="js-tab" data-group-id="1" data-target="#tab-2" data-toggle-class="active">.js-tab</div>
+            <div class="js-tab" data-group-id="1" data-target="#tab-3" data-toggle-class="active">.js-tab</div>
+            <div class="js-tab" data-group-id="1" data-target="#tab-4" data-toggle-class="active">.js-tab</div>
         </div>
         <div class="tab-contents">
-            <div class="tab-content" id="tab-content-1"></div>
-            <div class="tab-content" id="tab-content-2"></div>
-            <div class="tab-content" id="tab-content-3"></div>
-            <div class="tab-content" id="tab-content-4"></div>            
+            <div class="tab" id="tab-1">tab 1</div>
+            <div class="tab" id="tab-2">tab 2</div>
+            <div class="tab" id="tab-3">tab 3</div>
+            <div class="tab" id="tab-4">tab 4</div>            
         </div>
     </div>
 </body>
