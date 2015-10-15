@@ -23,6 +23,7 @@
         var _attrGroupId     = _attrPrefix + "group-id";
         var _attrScope     = _attrPrefix + "scope";
         var _attrPriority    = _attrPrefix + "priority";
+        var _attrFilters    = _attrPrefix + "filters";
         var _statusPrefix    = "js--";
         var _statusActive    = _statusPrefix + "active";
 
@@ -53,8 +54,9 @@
 
         function getTarget($domiEl) {
             var scope = getScope($domiEl);
+            var filters = getFilters($domiEl);
             var targetName = $domiEl.attr(_attrTarget);
-            var query, filter;
+            var query;
             
             if(scope) {
                 query = $domiEl[scope](targetName);
@@ -62,15 +64,19 @@
                 query = $(targetName);
             }
 
-            if(filter) {
+            $.each(filters, function(i, filter){
                 query = query && query[filter]();
-            }
+            });
 
             return query;
         }
 
         function getScope($domiEl) {
             return $domiEl.attr(_attrScope);
+        }
+
+        function getFilters($domiEl) {
+            return ($domiEl.attr(_attrFilters) || "").split(',');
         }
 
         function getToggleClass($domiEl) {
