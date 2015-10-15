@@ -1,0 +1,75 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Toggle Button Example with Scope</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../domi.js"></script>
+</head>
+<body>
+    <style type="text/css">
+        .container {
+            color: #000;
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            border-radius: 10px;
+            transition: all 200ms;
+            background: #f1f1f1;
+            border: 1px solid #999;
+            padding: 10px;
+        }
+
+        .js-toggle {
+            position: absolute;
+            width: 140px;
+            height: 50px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            background-color: #ff0066;
+            border-radius: 20px;
+            border-bottom: 5px solid #FFB2D1;
+        }
+
+        .js-toggle:active {
+            border: none;
+            top: 5px;
+        }
+
+        .js-toggle.js--active {
+            background-color: #ffffff;
+        }
+
+        body {
+            transition: background-color 300ms;
+        }
+
+        .active {
+            background-color: #ff0066;
+        }
+    </style>
+<!-- 
+    change data-scope to :
+
+    data-scope="parent"
+    data-scope="parents"
+    data-scope="closest"
+    data-scope="children"
+     -->
+    <div class="container">
+        container 1
+        <div class="container">
+            container 2
+            <div class="js-toggle" data-target=".container" data-scope="parents" data-toggle-class="active"></div>
+        </div>
+    </div>
+</body>
+</html>

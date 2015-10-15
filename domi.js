@@ -8,6 +8,10 @@
     }
 }(function ($) {
     $(function() {
+
+        // configuration
+        // 
+        
         var _elPrefix        = ".js-";
         var _elTab           = _elPrefix + 'tab';
         var _elToggle        = _elPrefix + 'toggle';
@@ -17,29 +21,83 @@
         var _attrTarget      = _attrPrefix + "target";
         var _attrToggleClass = _attrPrefix + "toggle-class";
         var _attrGroupId     = _attrPrefix + "group-id";
-        var _attrPriority     = _attrPrefix + "priority";
+        var _attrScope     = _attrPrefix + "scope";
+        var _attrPriority    = _attrPrefix + "priority";
         var _statusPrefix    = "js--";
         var _statusActive    = _statusPrefix + "active";
 
         // base element toggle function
 
-        function toggle ($element, status) {
-            var targetData = $element.attr(_attrTarget);
-            var classData  = $element.attr(_attrToggleClass);
+        function toggle (_selector, $domiEl, status) {
+            var $target = getTarget($domiEl);
+            var classData  = getToggleClass($domiEl);
 
-            $(targetData).toggleClass(classData, status);
+            $target.toggleClass(classData, status);
 
-            var query = '[' + _attrTarget + '="' + targetData + '"]['+ _attrToggleClass +'="'+ classData +'"]';
-            $(query).toggleClass(_statusActive, status);
+            var registeredElements = getRegisteredElements(_selector, $target);
+            $.each(registeredElements, function(i, $el) {
+                if(classData == getToggleClass($el)) {
+                    $el.toggleClass(_statusActive, status);
+                }
+            });
         }
 
-        function toggleByGroupId(_selector, $element, status) {
-            var groupId = $element.attr(_attrGroupId);
+        function toggleByGroupId(_selector, $domiEl, status) {
+            var groupId = getGroupId($domiEl);
             if(!groupId) return;
             
             $(_selector + '[' + _attrGroupId + '=' + groupId +']').each(function() {
-                toggle($(this), status);
+                toggle(_selector, $(this), status);
             });
+        }
+
+        function getTarget($domiEl) {
+            var scope = getScope($domiEl);
+            var targetName = $domiEl.attr(_attrTarget);
+            var query, filter;
+            
+            if(scope) {
+                query = $domiEl[scope](targetName);
+            } else {
+                query = $(targetName);
+            }
+
+            if(filter) {
+                query = query && query[filter]();
+            }
+
+            return query;
+        }
+
+        function getScope($domiEl) {
+            return $domiEl.attr(_attrScope);
+        }
+
+        function getToggleClass($domiEl) {
+            return $domiEl.attr(_attrToggleClass);
+        }
+
+        function getGroupId($domiEl) {
+            return $domiEl.attr(_attrGroupId);
+        }
+
+        function getPriority($domiEl) {
+            return $domiEl.attr(_attrPriority) || "0";
+        }
+
+        function registerToTarget(type, $domiEl, $target) {
+            var data = $target.data();
+            data['domi'] = data['domi'] || {};
+            data['domi'][type] = data['domi'][type] || [];
+
+            // add the element to the list
+            data['domi'][type].push($domiEl);
+            $target.data('domi', data['domi']);
+        }
+
+        function getRegisteredElements(type, $target) {
+            var data = $target.data();
+            return data['domi'][type];
         }
 
         // js-tab
@@ -47,14 +105,18 @@
         // usage:
         // 
         // <div class="js-toggle" data-target="#menu" data-toggle-class="opened">
-
-        $(_elTab).on('click', function() {
+        $(_elTab).each(function(i, el) {
+            var $el = $(el);
+            registerToTarget(_elTab, $el, getTarget($el));
+        });
+        $(_elTab).on('click', function(e) {
+            e.preventDefault();
             var $this  = $(this);
             var status = $this.hasClass(_statusActive);
 
             if(!status) {
                 toggleByGroupId(_elTab, $this, false);
-                toggle($this, !status);
+                toggle(_elTab, $this, !status);
             }
         });
 
@@ -65,12 +127,17 @@
         // <div class="js-toggle" data-target="body" data-toggle-class="main-menu-opened">
         //
 
-        $(_elToggle).on('click', function() {
+        $(_elToggle).each(function(i, el) {
+            var $el = $(el);
+            registerToTarget(_elToggle, $el, getTarget($el));
+        });
+        $(_elToggle).on('click', function(e) {
+            e.preventDefault();
             var $this  = $(this);
             var status = $this.hasClass(_statusActive);
 
             toggleByGroupId(_elToggle, $this, false);
-            toggle($this, !status);
+            toggle(_elToggle, $this, !status);
         });
 
         // js-overflow-box
@@ -97,14 +164,13 @@
 
             children.each(function(i, el){
                 $current = $(el);
-                $current.attr(_attrPriority, $current.attr(_attrPriority) || 0);
 
                 $min = null;
-                priority = $current.attr(_attrPriority);
+                priority = getPriority($current);
 
                 for (c = i - 1; c >= 0; c--) {
                     $tmp = $(children[c]);
-                    tmpPriority = $tmp.attr(_attrPriority);
+                    tmpPriority = getPriority($tmp);
 
                     if (!$min && tmpPriority <= priority){
                         $min = $tmp;
@@ -115,8 +181,8 @@
             });
 
             var priorityList = children.sort(function(a, b) {
-                pA = $(a).attr(_attrPriority);
-                pB = $(b).attr(_attrPriority);
+                pA = getPriority($(a));
+                pB = getPriority($(b));
 
                 return pA - pB;
             });
@@ -128,7 +194,7 @@
             $(_elOverflowBox).each(function(){
                 var $container = $(this);
                 var containerWidth = $container.width();
-                var targetData = $container.attr(_attrTarget);
+                var $target = getTarget($container);
                 var tmpWidth = 0;
 
                 var children = $container.data('children');
@@ -142,17 +208,17 @@
                         if($el.parent()[0] == $container[0]) {
                             return
                         } else {
-                            var target = $el.data('data-left-node');
-                            if(!target) {
+                            var previousNode = $el.data('data-left-node');
+                            if(!previousNode) {
                                 $container.prepend($el);
                             } else {
-                                $el.insertAfter(target);
+                                $el.insertAfter(previousNode);
                             }
                         }
                     } else {
                         if($el.parent()[0] == $container[0]) {
-                            if(targetData) {
-                                $(targetData).append($el);
+                            if($target) {
+                                $target.append($el);
                             } else {
                                 $el.remove();
                             }
@@ -181,13 +247,13 @@
             var scroll = $(window).scrollTop();
             $(_elScrollTrigger).each(function() {
                 var $this         = $(this);
-                var classData     = $this.attr(_attrToggleClass);
+                var classData     = getToggleClass($this);
                 var currentStatus = $this.hasClass(_statusActive);
                 var newStatus     = ($this.offset().top + $this.outerHeight(true) < scroll);
 
                 if(currentStatus != newStatus) {
-                    var $targetData = $($this.attr(_attrTarget));
-                    $targetData.toggleClass(classData, newStatus);
+                    var $target = getTarget($this);
+                    $target.toggleClass(classData, newStatus);
                     $this.toggleClass(_statusActive, newStatus);
                 }
             });
