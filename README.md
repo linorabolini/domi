@@ -29,3 +29,17 @@ Serve a simple set of Dom configurable elements in a compact Jquery addon.
 ```html
 <div class="js-scroll-trigger" data-target="body" data-toggle-class="with-fixed-header">
 ```
+
+#### Overflow Boxes
+
+>Only have limited space to show elements ? Move the rest automatically to another place.
+Some elements are more important than others ? no worries! It supports priorities.
+
+```html
+<div class="js-overflow-box" data-target="#storage">
+  <div data-priority="5">this one will be removed first</div>
+  <div>some element with no priority. The default is 0</div>
+</div>
+
+<div id="storage">Here is where the elements will be stored.</div>
+```
