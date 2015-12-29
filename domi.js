@@ -212,6 +212,8 @@
                 var tmpWidth = 0;
 
                 var children = $container.data('children');
+
+                var isTargetActive = false;
                 
                 $.each(children, function (i, el) {
                     var $el = $(el);
@@ -233,14 +235,19 @@
                         if($el.parent()[0] == $container[0]) {
                             if($target) {
                                 $target.append($el);
+                                isTargetActive = true;
                             } else {
                                 $el.remove();
                             }
                         } else {
+                            isTargetActive = true;
                             return false
                         }
                     }
-                })
+                });
+
+                $container.toggleClass(_statusActive, isTargetActive);
+                $target.toggleClass(_statusActive, isTargetActive);
 
             });
         }
