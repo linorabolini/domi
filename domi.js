@@ -194,14 +194,25 @@
                 $current.data('data-left-node', $min);
             });
 
-            var priorityList = children.sort(function(a, b) {
-                pA = getPriority($(a));
-                pB = getPriority($(b));
 
-                return pA - pB;
-            });
+            function bubbleSort(a) {
+                var swapped;
+                do {
+                    swapped = false;
+                    for (var i=0; i < a.length-1; i++) {
+                        if (getPriority($(a[i])) > getPriority($(a[i+1]))) {
+                            var temp = a[i];
+                            a[i] = a[i+1];
+                            a[i+1] = temp;
+                            swapped = true;
+                        }
+                    }
+                } while (swapped);
+            }
+             
+            bubbleSort(children);
             
-            $this.data('children', priorityList);
+            $this.data('children', children);
         });
 
         function checkOverflowBoxes() {
@@ -214,12 +225,12 @@
                 var children = $container.data('children');
 
                 var isTargetActive = false;
-                
+                var canAddMore = true;
                 $.each(children, function (i, el) {
                     var $el = $(el);
                     var elWidth = $el.outerWidth(true);
 
-                    if(tmpWidth + elWidth < containerWidth) {
+                    if(tmpWidth + elWidth < containerWidth && canAddMore) {
                         tmpWidth += elWidth;
                         if($el.parent()[0] == $container[0]) {
                             return
@@ -228,6 +239,7 @@
                             if(!previousNode) {
                                 $container.prepend($el);
                             } else {
+                                debugger;
                                 $el.insertAfter(previousNode);
                             }
                         }
@@ -235,10 +247,11 @@
                         if($el.parent()[0] == $container[0]) {
                             if($target) {
                                 $target.append($el);
-                                isTargetActive = true;
                             } else {
                                 $el.remove();
                             }
+                            canAddMore = false;
+                            isTargetActive = true;
                         } else {
                             isTargetActive = true;
                             return false
