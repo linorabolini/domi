@@ -226,36 +226,30 @@
 
                 var isTargetActive = false;
                 var canAddMore = true;
+
+                $.each(children, function (i, el) {
+                    var $el = $(el);
+                    var previousNode = $el.data('data-left-node');
+                    if(!previousNode) {
+                        $container.prepend($el);
+                    } else {
+                        $el.insertAfter(previousNode);
+                    }
+                });
+
                 $.each(children, function (i, el) {
                     var $el = $(el);
                     var elWidth = $el.outerWidth(true);
-
                     if(tmpWidth + elWidth < containerWidth && canAddMore) {
                         tmpWidth += elWidth;
-                        if($el.parent()[0] == $container[0]) {
-                            return
-                        } else {
-                            var previousNode = $el.data('data-left-node');
-                            if(!previousNode) {
-                                $container.prepend($el);
-                            } else {
-                                debugger;
-                                $el.insertAfter(previousNode);
-                            }
-                        }
                     } else {
-                        if($el.parent()[0] == $container[0]) {
-                            if($target) {
-                                $target.append($el);
-                            } else {
-                                $el.remove();
-                            }
-                            canAddMore = false;
-                            isTargetActive = true;
+                        if($target) {
+                            $target.append($el);
                         } else {
-                            isTargetActive = true;
-                            return false
+                            $el.remove();
                         }
+                        canAddMore = false;
+                        isTargetActive = true;
                     }
                 });
 
