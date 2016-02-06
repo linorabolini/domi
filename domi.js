@@ -10,22 +10,40 @@
     $(function() {
 
         // configuration
-        // 
         
-        var _elPrefix        = ".js-";
-        var _elTab           = _elPrefix + 'tab';
-        var _elToggle        = _elPrefix + 'toggle';
-        var _elOverflowBox   = _elPrefix + 'overflow-box';
-        var _elScrollTrigger = _elPrefix + 'scroll-trigger';
-        var _attrPrefix      = "data-";
-        var _attrTarget      = _attrPrefix + "target";
-        var _attrToggleClass = _attrPrefix + "toggle-class";
-        var _attrGroupId     = _attrPrefix + "group-id";
-        var _attrScope     = _attrPrefix + "scope";
-        var _attrPriority    = _attrPrefix + "priority";
-        var _attrFilters    = _attrPrefix + "filters";
-        var _statusPrefix    = "js--";
-        var _statusActive    = _statusPrefix + "active";
+        var _elPrefix          = ".js-";
+        var _elTab             = _elPrefix + 'tab';
+        var _elToggle          = _elPrefix + 'toggle';
+        var _elOverflowBox     = _elPrefix + 'overflow-box';
+        var _elScrollTrigger   = _elPrefix + 'scroll-trigger';
+        var _attrPrefix        = "data-";
+        var _attrTarget        = _attrPrefix + "target";
+        var _attrToggleClass   = _attrPrefix + "toggle-class";
+        var _attrGroupId       = _attrPrefix + "group-id";
+        var _attrScope         = _attrPrefix + "scope";
+        var _attrPriority      = _attrPrefix + "priority";
+        var _attrFilters       = _attrPrefix + "filters";
+        var _attrElementLoaded = _attrPrefix + "loaded";
+        var _statusPrefix      = "js--";
+        var _statusActive      = _statusPrefix + "active";
+
+        // store data for window listeners
+        
+        var _overflowBoxes = [];
+        var _scrollTriggers = [];
+
+        // global data store
+
+        domi = {
+            createTab: createTab,
+            createToggle: createToggle,
+            createScrollTrigger: createScrollTrigger,
+            createOverflowBox: createOverflowBox,
+            reload: reload,
+            elementsLoaded: 0,
+            isListeningScroll: false,
+            isListeningResize: false
+        }
 
         // base element toggle function
 
@@ -93,6 +111,17 @@
             return $domiEl.attr(_attrPriority) || "0";
         }
 
+        function registerAsLoaded($domiEl) {
+            var value = $domiEl.attr(_attrElementLoaded);
+
+            if(!value) {
+                $domiEl.attr(_attrElementLoaded, true);
+                domi.elementsLoaded++;
+            }
+
+            return value
+        }
+
         function registerToTarget(type, $domiEl, $target) {
             $target.each(function(i, el){
                 var $el = $(el);
@@ -119,20 +148,28 @@
         // usage:
         // 
         // <div class="js-toggle" data-target="#menu" data-toggle-class="opened">
-        $(_elTab).each(function(i, el) {
-            var $el = $(el);
-            registerToTarget(_elTab, $el, getTarget($el));
-        });
-        $(_elTab).on('click', function(e) {
-            e.preventDefault();
-            var $this  = $(this);
-            var status = $this.hasClass(_statusActive);
+        function createTab(selector) {
+            $(selector).each(function() {
+                var $el = $(this);
 
-            if(!status) {
-                toggleByGroupId(_elTab, $this, false);
-                toggle(_elTab, $this, !status);
-            }
-        });
+                if(registerAsLoaded($el)) {
+                    return
+                }
+
+                registerToTarget(_elTab, $el, getTarget($el));
+                $el.on('click', function(e) {
+                    e.preventDefault();
+                    var $this  = $(this);
+                    var status = $this.hasClass(_statusActive);
+
+                    if(!status) {
+                        toggleByGroupId(_elTab, $this, false);
+                        toggle(_elTab, $this, !status);
+                    }
+                });
+            });
+        }
+
 
         // js-toggle
         // 
@@ -140,19 +177,26 @@
         // 
         // <div class="js-toggle" data-target="body" data-toggle-class="main-menu-opened">
         //
+        function createToggle(selector) {
+            $(selector).each(function() {
+                var $el = $(this);
+                
+                if(registerAsLoaded($el)) {
+                    return
+                }
 
-        $(_elToggle).each(function(i, el) {
-            var $el = $(el);
-            registerToTarget(_elToggle, $el, getTarget($el));
-        });
-        $(_elToggle).on('click', function(e) {
-            e.preventDefault();
-            var $this  = $(this);
-            var status = $this.hasClass(_statusActive);
+                registerToTarget(_elToggle, $el, getTarget($el));
+                $el.on('click', function(e) {
+                    e.preventDefault();
+                    var $this  = $(this);
+                    var status = $this.hasClass(_statusActive);
 
-            toggleByGroupId(_elToggle, $this, false);
-            toggle(_elToggle, $this, !status);
-        });
+                    toggleByGroupId(_elToggle, $this, false);
+                    toggle(_elToggle, $this, !status);
+                });
+            });
+        }
+
 
         // js-overflow-box
         // 
@@ -161,71 +205,82 @@
         // <div class="js-overflow-box" data-target="body">
         //
 
+        function createOverflowBox(selector) {
+            $(selector).each(function() {
+                var $el      = $(this);
+                var children = $el.children();
+                var tmpPriority;
+                var priority;
+                var $current;
+                var $min;
+                var $max;
+                var $tmp;
+                var pA;
+                var pB;
+                var c;
+                var i;
 
-        $(_elOverflowBox).each(function(){
-            var $this = $(this);
-            var children = $this.children();
-            var i;
-            var c;
-            var $current;
-            var $min;
-            var $max;
-            var $tmp;
-            var priority;
-            var tmpPriority;
-            var pA;
-            var pB;
+                if(registerAsLoaded($el)) {
+                    return
+                }
 
-            children.each(function(i, el){
-                $current = $(el);
+                _overflowBoxes.push($el);
 
-                $min = null;
-                priority = getPriority($current);
+                children.each(function(i, current){
+                    $current = $(current);
 
-                for (c = i - 1; c >= 0; c--) {
-                    $tmp = $(children[c]);
-                    tmpPriority = getPriority($tmp);
+                    $min = null;
+                    priority = getPriority($current);
 
-                    if (!$min && tmpPriority <= priority){
-                        $min = $tmp;
-                    }
-                };
+                    for (c = i - 1; c >= 0; c--) {
+                        $tmp = $(children[c]);
+                        tmpPriority = getPriority($tmp);
 
-                $current.data('data-left-node', $min);
+                        if (!$min && tmpPriority <= priority){
+                            $min = $tmp;
+                        }
+                    };
+
+                    $current.data('data-left-node', $min);
+                });
+
+
+                function bubbleSort(a) {
+                    var swapped;
+                    do {
+                        swapped = false;
+                        for (var i=0; i < a.length-1; i++) {
+                            if (getPriority($(a[i])) > getPriority($(a[i+1]))) {
+                                var temp = a[i];
+                                a[i] = a[i+1];
+                                a[i+1] = temp;
+                                swapped = true;
+                            }
+                        }
+                    } while (swapped);
+                }
+                 
+                bubbleSort(children);
+                
+                $el.data('children', children);
             });
 
-
-            function bubbleSort(a) {
-                var swapped;
-                do {
-                    swapped = false;
-                    for (var i=0; i < a.length-1; i++) {
-                        if (getPriority($(a[i])) > getPriority($(a[i+1]))) {
-                            var temp = a[i];
-                            a[i] = a[i+1];
-                            a[i+1] = temp;
-                            swapped = true;
-                        }
-                    }
-                } while (swapped);
+            if(!domi.isListeningResize && _overflowBoxes.length) {
+                $(window).resize(checkOverflowBoxes);
+                checkOverflowBoxes();
+                domi.isListeningResize = true;
             }
-             
-            bubbleSort(children);
-            
-            $this.data('children', children);
-        });
+        }
+        
 
         function checkOverflowBoxes() {
-            $(_elOverflowBox).each(function(){
-                var $container = $(this);
+            $.each(_overflowBoxes, function(i, $container) {
                 var containerWidth = $container.width();
-                var $target = getTarget($container);
-                var tmpWidth = 0;
-
-                var children = $container.data('children');
-
+                var $target        = getTarget($container);
+                var tmpWidth       = 0;
+                var children       = $container.data('children');
                 var isTargetActive = false;
-                var canAddMore = true;
+                var canAddMore     = true;
 
                 $.each(children, function (i, el) {
                     var $el = $(el);
@@ -255,14 +310,9 @@
 
                 $container.toggleClass(_statusActive, isTargetActive);
                 $target.toggleClass(_statusActive, isTargetActive);
-
             });
         }
 
-        if($(_elOverflowBox).length) {
-            $(window).resize(checkOverflowBoxes);
-            checkOverflowBoxes();
-        }
 
         // scroll triggers 
         // 
@@ -271,25 +321,48 @@
         // <div class="js-scroll-trigger" data-target="body" data-toggle-class="activate-fixed-header">
         // 
 
+        function createScrollTrigger(selector) {
+            $(selector).each(function() {
+                var $el = $(this);
+                
+                if(registerAsLoaded($el)) {
+                    return
+                }
+
+                _scrollTriggers.push($el);
+            });
+
+            if(!domi.isListeningScroll && _scrollTriggers.length) {
+                $(window).scroll(checkScrollTriggers);
+                checkScrollTriggers();
+                domi.isListeningScroll = true;
+            }
+        }
+
         function checkScrollTriggers() {
             var scroll = $(window).scrollTop();
-            $(_elScrollTrigger).each(function() {
-                var $this         = $(this);
-                var classData     = getToggleClass($this);
-                var currentStatus = $this.hasClass(_statusActive);
-                var newStatus     = ($this.offset().top + $this.outerHeight(true) < scroll);
+            $.each(_scrollTriggers, function(i, $scrollTrigger) {
+                var classData     = getToggleClass($scrollTrigger);
+                var currentStatus = $scrollTrigger.hasClass(_statusActive);
+                var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    var $target = getTarget($this);
+                    var $target = getTarget($scrollTrigger);
                     $target.toggleClass(classData, newStatus);
-                    $this.toggleClass(_statusActive, newStatus);
+                    $scrollTrigger.toggleClass(_statusActive, newStatus);
                 }
             });
         }
 
-        if($(_elScrollTrigger).length) {
-            $(window).scroll(checkScrollTriggers);
-            checkScrollTriggers();
+        // init / reload
+        
+        function reload() {
+            createTab(_elTab);
+            createToggle(_elToggle);
+            createOverflowBox(_elOverflowBox);
+            createScrollTrigger(_elScrollTrigger);
         }
+
+        reload();
     });
 }));
