@@ -71,10 +71,10 @@
             });
         }
 
-        function getTarget($domiEl) {
+        function getTarget($domiEl, defaultSelector) {
             var scope = getScope($domiEl);
             var filters = getFilters($domiEl);
-            var targetName = $domiEl.attr(_attrTarget);
+            var targetName = $domiEl.attr(_attrTarget) || defaultSelector;
             var query;
             
             if(scope) {
@@ -347,7 +347,7 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    var $target = getTarget($scrollTrigger);
+                    var $target = getTarget($scrollTrigger, 'body');
                     $target.toggleClass(classData, newStatus);
                     $scrollTrigger.toggleClass(_statusActive, newStatus);
                 }
