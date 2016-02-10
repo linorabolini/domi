@@ -9,41 +9,35 @@
 }(function ($) {
     $(function() {
 
-        // configuration
+        // default configuration
         
-        var _elPrefix          = ".js-";
-        var _elTab             = _elPrefix + 'tab';
-        var _elToggle          = _elPrefix + 'toggle';
-        var _elOverflowBox     = _elPrefix + 'overflow-box';
-        var _elScrollTrigger   = _elPrefix + 'scroll-trigger';
-        var _attrPrefix        = "data-";
-        var _attrTarget        = _attrPrefix + "target";
-        var _attrToggleClass   = _attrPrefix + "toggle-class";
-        var _attrGroupId       = _attrPrefix + "group-id";
-        var _attrScope         = _attrPrefix + "scope";
-        var _attrPriority      = _attrPrefix + "priority";
-        var _attrFilters       = _attrPrefix + "filters";
-        var _attrElementLoaded = _attrPrefix + "loaded";
-        var _statusPrefix      = "js--";
-        var _statusActive      = _statusPrefix + "active";
+        var _ = {};
+            _.elPrefix          = ".js-";
+            _.elTab             = _.elPrefix + 'tab';
+            _.elToggle          = _.elPrefix + 'toggle';
+            _.elOverflowBox     = _.elPrefix + 'overflow-box';
+            _.elScrollTrigger   = _.elPrefix + 'scroll-trigger';
+            _.attrPrefix        = "data-";
+            _.attrTarget        = _.attrPrefix + "target";
+            _.attrToggleClass   = _.attrPrefix + "toggle-class";
+            _.attrGroupId       = _.attrPrefix + "group-id";
+            _.attrScope         = _.attrPrefix + "scope";
+            _.attrPriority      = _.attrPrefix + "priority";
+            _.attrFilters       = _.attrPrefix + "filters";
+            _.attrElementLoaded = _.attrPrefix + "loaded";
+            _.statusPrefix      = "js--";
+            _.statusActive      = _.statusPrefix + "active";
+
+        var info = {
+            elementsLoaded: 0,
+            isListeningScroll: false,
+            isListeningResize: false
+        }
 
         // store data for window listeners
         
         var _overflowBoxes = [];
         var _scrollTriggers = [];
-
-        // global data store
-
-        domi = {
-            createTab: createTab,
-            createToggle: createToggle,
-            createScrollTrigger: createScrollTrigger,
-            createOverflowBox: createOverflowBox,
-            reload: reload,
-            elementsLoaded: 0,
-            isListeningScroll: false,
-            isListeningResize: false
-        }
 
         // base element toggle function
 
@@ -52,12 +46,12 @@
             var classData  = getToggleClass($domiEl);
 
             $target.toggleClass(classData, status);
-            $domiEl.toggleClass(_statusActive, status);
+            $domiEl.toggleClass(_.statusActive, status);
 
             var registeredElements = getRegisteredElements(_selector, $target);
             registeredElements && $.each(registeredElements, function(i, $el) {
                 if(classData == getToggleClass($el)) {
-                    $el.toggleClass(_statusActive, status);
+                    $el.toggleClass(_.statusActive, status);
                 }
             });
         }
@@ -66,7 +60,7 @@
             var groupId = getGroupId($domiEl);
             if(!groupId) return;
             
-            $(_selector + '[' + _attrGroupId + '=' + groupId +']').each(function() {
+            $(_selector + '[' + _.attrGroupId + '=' + groupId +']').each(function() {
                 toggle(_selector, $(this), status);
             });
         }
@@ -74,7 +68,7 @@
         function getTarget($domiEl, defaultSelector) {
             var scope = getScope($domiEl);
             var filters = getFilters($domiEl);
-            var targetName = $domiEl.attr(_attrTarget) || defaultSelector;
+            var targetName = $domiEl.attr(_.attrTarget) || defaultSelector;
             var query;
             
             if(scope) {
@@ -92,31 +86,31 @@
         }
 
         function getScope($domiEl) {
-            return $domiEl.attr(_attrScope);
+            return $domiEl.attr(_.attrScope);
         }
 
         function getFilters($domiEl) {
-            return ($domiEl.attr(_attrFilters) || "").split(',');
+            return ($domiEl.attr(_.attrFilters) || "").split(',');
         }
 
         function getToggleClass($domiEl) {
-            return $domiEl.attr(_attrToggleClass);
+            return $domiEl.attr(_.attrToggleClass);
         }
 
         function getGroupId($domiEl) {
-            return $domiEl.attr(_attrGroupId);
+            return $domiEl.attr(_.attrGroupId);
         }
 
         function getPriority($domiEl) {
-            return $domiEl.attr(_attrPriority) || "0";
+            return $domiEl.attr(_.attrPriority) || "0";
         }
 
         function registerAsLoaded($domiEl) {
-            var value = $domiEl.attr(_attrElementLoaded);
+            var value = $domiEl.attr(_.attrElementLoaded);
 
             if(!value) {
-                $domiEl.attr(_attrElementLoaded, true);
-                domi.elementsLoaded++;
+                $domiEl.attr(_.attrElementLoaded, true);
+                info.elementsLoaded++;
             }
 
             return value
@@ -156,15 +150,15 @@
                     return
                 }
 
-                registerToTarget(_elTab, $el, getTarget($el));
+                registerToTarget(_.elTab, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var $this  = $(this);
-                    var status = $this.hasClass(_statusActive);
+                    var status = $this.hasClass(_.statusActive);
 
                     if(!status) {
-                        toggleByGroupId(_elTab, $this, false);
-                        toggle(_elTab, $this, !status);
+                        toggleByGroupId(_.elTab, $this, false);
+                        toggle(_.elTab, $this, !status);
                     }
                 });
             });
@@ -185,14 +179,14 @@
                     return
                 }
 
-                registerToTarget(_elToggle, $el, getTarget($el));
+                registerToTarget(_.elToggle, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var $this  = $(this);
-                    var status = $this.hasClass(_statusActive);
+                    var status = $this.hasClass(_.statusActive);
 
-                    toggleByGroupId(_elToggle, $this, false);
-                    toggle(_elToggle, $this, !status);
+                    toggleByGroupId(_.elToggle, $this, false);
+                    toggle(_.elToggle, $this, !status);
                 });
             });
         }
@@ -265,10 +259,10 @@
                 $el.data('children', children);
             });
 
-            if(!domi.isListeningResize && _overflowBoxes.length) {
+            if(!info.isListeningResize && _overflowBoxes.length) {
                 $(window).resize(checkOverflowBoxes);
                 checkOverflowBoxes();
-                domi.isListeningResize = true;
+                info.isListeningResize = true;
             }
         }
         
@@ -308,8 +302,8 @@
                     }
                 });
 
-                $container.toggleClass(_statusActive, isTargetActive);
-                $target.toggleClass(_statusActive, isTargetActive);
+                $container.toggleClass(_.statusActive, isTargetActive);
+                $target.toggleClass(_.statusActive, isTargetActive);
             });
         }
 
@@ -332,10 +326,10 @@
                 _scrollTriggers.push($el);
             });
 
-            if(!domi.isListeningScroll && _scrollTriggers.length) {
+            if(!info.isListeningScroll && _scrollTriggers.length) {
                 $(window).scroll(checkScrollTriggers);
                 checkScrollTriggers();
-                domi.isListeningScroll = true;
+                info.isListeningScroll = true;
             }
         }
 
@@ -343,26 +337,37 @@
             var scroll = $(window).scrollTop();
             $.each(_scrollTriggers, function(i, $scrollTrigger) {
                 var classData     = getToggleClass($scrollTrigger);
-                var currentStatus = $scrollTrigger.hasClass(_statusActive);
+                var currentStatus = $scrollTrigger.hasClass(_.statusActive);
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
                     var $target = getTarget($scrollTrigger, 'body');
                     $target.toggleClass(classData, newStatus);
-                    $scrollTrigger.toggleClass(_statusActive, newStatus);
+                    $scrollTrigger.toggleClass(_.statusActive, newStatus);
                 }
             });
         }
 
-        // init / reload
-        
-        function reload() {
-            createTab(_elTab);
-            createToggle(_elToggle);
-            createOverflowBox(_elOverflowBox);
-            createScrollTrigger(_elScrollTrigger);
+        // entry point      
+
+        $.fn.domi = function (options) {
+
+            // Iterate and reformat each matched element.
+            return this.each(function() {
+            
+                var $el = $( this );
+            
+                createTab($el.find(_.elTab));
+                createToggle($el.find(_.elToggle));
+                createOverflowBox($el.find(_.elOverflowBox));
+                createScrollTrigger($el.find(_.elScrollTrigger));
+            
+            });
         }
 
-        reload();
+        $.fn.domi.status = info;
+
+        // run for all the body elements by default
+        $('body').domi();
     });
 }));

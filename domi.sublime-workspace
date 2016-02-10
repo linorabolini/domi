@@ -523,7 +523,23 @@
 			"file": "domi.js",
 			"settings":
 			{
-				"buffer_size": 11728,
+				"buffer_size": 11974,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "domi.min.js",
+			"settings":
+			{
+				"buffer_size": 3522,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "examples/scroll-trigger.html",
+			"settings":
+			{
+				"buffer_size": 1415,
 				"line_ending": "Unix"
 			}
 		},
@@ -607,24 +623,24 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 267.0,
-		"last_filter": "insta",
+		"height": 147.0,
+		"last_filter": "install",
 		"selected_items":
 		[
-			[
-				"insta",
-				"Package Control: Install Package"
-			],
-			[
-				"package",
-				"Package Control: Remove Package"
-			],
 			[
 				"install",
 				"Package Control: Install Package"
 			],
 			[
 				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
 				"Package Control: Remove Package"
 			],
 			[
@@ -679,6 +695,8 @@
 	],
 	"file_history":
 	[
+		"/Users/linorabolini/Documents/Projects/domi/domi.js",
+		"/Users/linorabolini/Library/Application Support/Sublime Text 3/Packages/User/Side Bar.sublime-settings",
 		"/Users/linorabolini/beta/static/css/fonts/tisa.css",
 		"/Users/linorabolini/beta/engine/tk6/templates/community/roar/base_frontpage.html",
 		"/Users/linorabolini/beta/engine/tk6/templates/mustache/roar/post/section.html",
@@ -804,9 +822,7 @@
 		"/Users/linorabolini/beta/static/css/roar/tk6/modules/menu-global.css",
 		"/Users/linorabolini/beta/static/js/widgets/views/posts/edit_mode/restick.js",
 		"/Users/linorabolini/beta/static/css/roar/papermag/ads.css",
-		"/Users/linorabolini/beta/engine/papermag/templates/dynamic_content/partials/rebelbar.xml",
-		"/Users/linorabolini/beta/static/css/roar/papermag/modules/rebelbar.css",
-		"/Users/linorabolini/beta/engine/papermag/templates/dynamic_content/base.xml"
+		"/Users/linorabolini/beta/engine/papermag/templates/dynamic_content/partials/rebelbar.xml"
 	],
 	"find":
 	{
@@ -880,6 +896,28 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"domiDefaults",
+			"domi.is",
+			"domi.",
+			"_",
+			"elementsLoaded",
+			";",
+			"= ",
+			"var _.",
+			"_status",
+			"_attr",
+			"_attrScope",
+			"_attrGroupId",
+			"_attrToggleClass",
+			"_attrTarget",
+			"_attrPrefix",
+			"_elScrollTrigger",
+			"_elOverflowBox",
+			"_elToggle",
+			"_elTab",
+			"_elPrefix",
+			"checkScrollTriggers",
+			"getTarget",
 			"_isListeningResize",
 			"_isListeningScroll",
 			"isListeningScroll",
@@ -985,29 +1023,7 @@
 			"quiz-result-title",
 			"quiz-answer-description",
 			"quiz-answer-label",
-			"-mode",
-			"15px",
-			"66%",
-			"66.66",
-			"rebelbar__section-links",
-			"margin",
-			"sl-player-wrapper",
-			"all",
-			", ",
-			"div-for-sl-player",
-			"title",
-			"target",
-			"isInfinite",
-			"enemy",
-			"this.target",
-			"go.position",
-			"LinkedTargetMover",
-			"FollowTargetsMover",
-			"i",
-			"175px",
-			"175",
-			"rebelbar__section-links",
-			"span"
+			"-mode"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1091,25 +1107,25 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11728,
+						"buffer_size": 11974,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1286,
-								1286
+								1183,
+								1183
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 4976.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1117,6 +1133,64 @@
 				},
 				{
 					"buffer": 1,
+					"file": "domi.min.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3522,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3522,
+								3522
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "examples/scroll-trigger.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1205,
+								1205
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "examples/toggle.html",
 					"semi_transient": false,
 					"settings":
@@ -1142,11 +1216,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 4,
 					"file": "examples/index.html",
 					"semi_transient": false,
 					"settings":
@@ -1158,8 +1232,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								3171,
+								3171
 							]
 						],
 						"settings":
@@ -1169,7 +1243,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1376.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
