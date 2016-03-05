@@ -12,23 +12,24 @@
         // default configuration
         
         var _ = {};
-            _.elPrefix          = ".js-";
-            _.elTab             = _.elPrefix + 'tab';
-            _.elToggle          = _.elPrefix + 'toggle';
-            _.elOverflowBox     = _.elPrefix + 'overflow-box';
-            _.elScrollTrigger   = _.elPrefix + 'scroll-trigger';
-            _.attrPrefix        = "data-";
-            _.attrTarget        = _.attrPrefix + "target";
-            _.attrToggleClass   = _.attrPrefix + "toggle-class";
-            _.attrGroupId       = _.attrPrefix + "group-id";
-            _.attrScope         = _.attrPrefix + "scope";
-            _.attrPriority      = _.attrPrefix + "priority";
-            _.attrFilters       = _.attrPrefix + "filters";
-            _.attrTriggers      = _.attrPrefix + "triggers";
-            _.attrListeners     = _.attrPrefix + "listeners";
-            _.attrElementLoaded = _.attrPrefix + "loaded";
-            _.statusPrefix      = "js--";
-            _.statusActive      = _.statusPrefix + "active";
+            _.elPrefix            = ".js-";
+            _.elTab               = _.elPrefix + 'tab';
+            _.elToggle            = _.elPrefix + 'toggle';
+            _.elOverflowBox       = _.elPrefix + 'overflow-box';
+            _.elScrollTrigger     = _.elPrefix + 'scroll-trigger';
+            _.attrPrefix          = "data-";
+            _.attrTarget          = _.attrPrefix + "target";
+            _.attrToggleClass     = _.attrPrefix + "toggle-class";
+            _.attrGroupId         = _.attrPrefix + "group-id";
+            _.attrUniqueGroup     = _.attrPrefix + "unique-group-id";
+            _.attrScope           = _.attrPrefix + "scope";
+            _.attrPriority        = _.attrPrefix + "priority";
+            _.attrFilters         = _.attrPrefix + "filters";
+            _.attrTriggers        = _.attrPrefix + "triggers";
+            _.attrListeners       = _.attrPrefix + "listeners";
+            _.attrElementLoaded   = _.attrPrefix + "loaded";
+            _.statusPrefix        = "js--";
+            _.statusActive        = _.statusPrefix + "active";
 
         var _info = {
             elementsLoaded: 0,
@@ -44,34 +45,13 @@
 
         // base element toggle function
 
-        function toggle (_selector, $domiEl, status) {
+        function toggle ($domiEl, status, silent) {
             var $target = getTarget($domiEl);
             var classData  = getToggleClass($domiEl);
 
             $target.toggleClass(classData, status);
-
-            var registeredElements = getRegisteredElements(_selector, $target);
-            registeredElements && $.each(registeredElements, function(i, $el) {
-                if(classData == getToggleClass($el)) {
-                    $el.toggleClass(_.statusActive, status);
-                    triggerEvents($el, status);
-                }
-            });
-        }
-
-        function toggleDomiEl(_selector, $domiEl, status, domiElStatus) {
-            var groupId = getGroupId($domiEl);
-            var $this;
-
-            if(!groupId) {
-                toggle(_selector, $domiEl, domiElStatus);
-                return;
-            }
-            
-            $(_selector + '[' + _.attrGroupId + '=' + groupId +']').each(function() {
-                $this = $(this);
-                toggle(_selector, $this, $this.is($domiEl) ? domiElStatus : status);
-            });
+            $domiEl.toggleClass(_.statusActive, status);
+            triggerEvents($domiEl, status, silent);
         }
 
         function getTarget($domiEl, defaultSelector) {
@@ -118,11 +98,15 @@
             return $domiEl.attr(_.attrGroupId);
         }
 
+        function getUniqueGroupId($domiEl) {
+            return $domiEl.attr(_.attrUniqueGroup);
+        }
+
         function getPriority($domiEl) {
             return $domiEl.attr(_.attrPriority) || "0";
         }
 
-        function triggerEvents($domiEl, status) {
+        function triggerEvents($domiEl, status, silent) {
             var triggers = getTriggers($domiEl);
             var sufix = status ? "--on" : "--off";
 
@@ -130,16 +114,46 @@
                 if(!event) return;
                 _hub.trigger(event + sufix);
             });
+
+            if (!silent) {
+                var groupId = getGroupId($domiEl);
+                groupId && _hub.trigger("group:" + groupId, $domiEl, status);
+
+                var uniqueGroupId = getUniqueGroupId($domiEl);
+                uniqueGroupId && _hub.trigger("unique-group:" + uniqueGroupId, $domiEl, status);
+            }
         }
 
         function registerAsLoaded($domiEl) {
-            var value = $domiEl.attr(_.attrElementLoaded);
-            var listeners = getListeners($domiEl);
+            var isLoaded = $domiEl.attr(_.attrElementLoaded);
 
-            if(!value) {
-                $domiEl.attr(_.attrElementLoaded, true);
-                _info.elementsLoaded++;
+            if(isLoaded) {
+                return isLoaded;
             }
+
+            $domiEl.attr(_.attrElementLoaded, true);
+            _info.elementsLoaded++;
+
+            var listeners = getListeners($domiEl);
+            var groupId = getGroupId($domiEl);
+            var uniqueGroupId = getUniqueGroupId($domiEl);
+
+            groupId && _hub.on("group:" + groupId, function(event, $domiElSender, status) {
+                console.log(event.type + " triggered");
+                console.log($domiEl.is($domiElSender));
+                if(!$domiEl.is($domiElSender)) {
+                    $domiEl.setActive(status, true);
+                }
+            });
+
+
+            uniqueGroupId && _hub.on("unique-group:" + uniqueGroupId, function(event, $domiElSender, status) {
+                console.log(event.type + " triggered");
+                console.log($domiEl.is($domiElSender));
+                if(!$domiEl.is($domiElSender)) {
+                    $domiEl.setActive(false, true);
+                }
+            });
 
             $.each(listeners, function(i, listener) {
                 var l = listener.split(":");
@@ -147,39 +161,20 @@
                 switch(l[0]) {
                     case "on":
                         _hub.on(l[1], function(event) {
-                            $domiEl.setActive(true);
+                            console.log(event.type + " triggered");
+                            $domiEl.setActive(true, false);
                         });
                         break;
                     case "off":
                         _hub.on(l[1], function(event) {
-                            $domiEl.setActive(false);
+                            console.log(event.type + " triggered");
+                            $domiEl.setActive(false, false);
                         });
                         break;
                 }
             });
 
-            return value
-        }
-
-        function registerToTarget(type, $domiEl, $target) {
-            $target.each(function(i, el){
-                var $el = $(el);
-                var data = $el.data('domi') || {};
-                data[type] = data[type] || [];
-
-                // add the element to the list
-                data[type].push($domiEl);
-                $el.data('domi', data);
-            })
-
-        }
-
-        function getRegisteredElements(type, $target) {
-            var data = $target.data('domi');
-            if(!data) {
-                console.warn("no data was stored, element registration failed?");
-            }
-            return data && data[type];
+            return isLoaded
         }
 
         // js-tab
@@ -195,17 +190,16 @@
                     return
                 }
 
-                $el.setActive = function (newStatus) {
-                    toggleDomiEl(_.elTab, $el, false, newStatus);
+                $el.setActive = function (newStatus, silent) {
+                    toggle($el, newStatus, silent);
                 }
 
-                registerToTarget(_.elTab, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        $el.setActive(true); 
+                        $el.setActive(true, false); 
                     }
                 });
             });
@@ -226,15 +220,15 @@
                     return
                 }
 
-                $el.setActive = function (newStatus) {
-                    toggleDomiEl(_.elToggle, $el, false, newStatus);
+                $el.setActive = function (newStatus, silent) {
+                    toggle($el, newStatus, silent);
                 }
 
-                registerToTarget(_.elToggle, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
-                    $el.setActive(!status);                    
+
+                    $el.setActive(!status, false);                    
                 });
             });
         }
@@ -266,9 +260,9 @@
                     return
                 }
 
-                $el.setActive = function (newStatus) {
+                $el.setActive = function (newStatus, silent) {
                     if(newStatus) {
-                        checkOverflowBoxes([$el]);
+                        checkOverflowBoxes([$el], silent);
                     }
                 }
 
@@ -324,7 +318,7 @@
             checkOverflowBoxes();
         }
 
-        function checkOverflowBoxes(overflowBoxes) {
+        function checkOverflowBoxes(overflowBoxes, silent) {
             $.each(overflowBoxes || _overflowBoxes, function(i, $container) {
                 var containerWidth = $container.width();
                 var $target        = getTarget($container);
@@ -361,7 +355,7 @@
 
                 $container.toggleClass(_.statusActive, isTargetActive);
                 $target.toggleClass(_.statusActive, isTargetActive);
-                triggerEvents($target, isTargetActive);
+                triggerEvents($container, isTargetActive, silent);
             });
         }
 
@@ -382,12 +376,12 @@
                 }
 
                 // move this to a prototype
-                $el.setActive = function (newStatus) {
+                $el.setActive = function (newStatus, silent) {
                     var $target   = getTarget($el, 'body');
                     var classData = getToggleClass($el);
                     $target.toggleClass(classData, newStatus);
                     $el.toggleClass(_.statusActive, newStatus);
-                    triggerEvents($el, newStatus);
+                    triggerEvents($el, newStatus, silent);
                 }
 
                 _scrollTriggers.push($el);
@@ -407,7 +401,7 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    $scrollTrigger.setActive(newStatus);
+                    $scrollTrigger.setActive(newStatus, false);
                 }
             });
         }
