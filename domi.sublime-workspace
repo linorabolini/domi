@@ -531,7 +531,7 @@
 			"file": "domi.min.js",
 			"settings":
 			{
-				"buffer_size": 3522,
+				"buffer_size": 3017,
 				"line_ending": "Unix"
 			}
 		},
@@ -556,6 +556,17 @@
 			"settings":
 			{
 				"buffer_size": 3528,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "module.exports = function(grunt) {\n\n  grunt.initConfig({\n    jshint: {\n      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],\n      options: {\n        globals: {\n          jQuery: true\n        }\n      }\n    },\n    watch: {\n      files: ['<%= jshint.files %>'],\n      tasks: ['jshint']\n    }\n  });\n\n  grunt.loadNpmTasks('grunt-contrib-jshint');\n  grunt.loadNpmTasks('grunt-contrib-watch');\n\n  grunt.registerTask('default', ['jshint']);\n\n};",
+			"file": "Gruntfile.js",
+			"file_size": 445,
+			"file_write_time": 130998752410000000,
+			"settings":
+			{
+				"buffer_size": 445,
 				"line_ending": "Unix"
 			}
 		}
@@ -690,8 +701,7 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/linorabolini/Documents/Projects/domi",
-		"/Users/linorabolini/Documents/Projects/domi/examples"
+		"/Users/linorabolini/Documents/Projects/domi"
 	],
 	"file_history":
 	[
@@ -1098,7 +1108,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -1114,8 +1124,8 @@
 						"selection":
 						[
 							[
-								1183,
-								1183
+								10790,
+								10792
 							]
 						],
 						"settings":
@@ -1125,10 +1135,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4976.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1137,15 +1147,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3522,
+						"buffer_size": 3017,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3522,
-								3522
+								3017,
+								3017
 							]
 						],
 						"settings":
@@ -1156,7 +1166,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -1186,7 +1196,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1216,7 +1226,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1246,7 +1256,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Gruntfile.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 445,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								95,
+								95
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

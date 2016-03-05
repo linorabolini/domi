@@ -24,11 +24,13 @@
             _.attrScope         = _.attrPrefix + "scope";
             _.attrPriority      = _.attrPrefix + "priority";
             _.attrFilters       = _.attrPrefix + "filters";
+            _.attrTriggers      = _.attrPrefix + "triggers";
+            _.attrListeners     = _.attrPrefix + "listeners";
             _.attrElementLoaded = _.attrPrefix + "loaded";
             _.statusPrefix      = "js--";
             _.statusActive      = _.statusPrefix + "active";
 
-        var info = {
+        var _info = {
             elementsLoaded: 0,
             isListeningScroll: false,
             isListeningResize: false
@@ -38,6 +40,7 @@
         
         var _overflowBoxes = [];
         var _scrollTriggers = [];
+        var _hub = $('<div/>');
 
         // base element toggle function
 
@@ -46,22 +49,28 @@
             var classData  = getToggleClass($domiEl);
 
             $target.toggleClass(classData, status);
-            $domiEl.toggleClass(_.statusActive, status);
 
             var registeredElements = getRegisteredElements(_selector, $target);
             registeredElements && $.each(registeredElements, function(i, $el) {
                 if(classData == getToggleClass($el)) {
                     $el.toggleClass(_.statusActive, status);
+                    triggerEvents($el, status);
                 }
             });
         }
 
-        function toggleByGroupId(_selector, $domiEl, status) {
+        function toggleDomiEl(_selector, $domiEl, status, domiElStatus) {
             var groupId = getGroupId($domiEl);
-            if(!groupId) return;
+            var $this;
+
+            if(!groupId) {
+                toggle(_selector, $domiEl, domiElStatus);
+                return;
+            }
             
             $(_selector + '[' + _.attrGroupId + '=' + groupId +']').each(function() {
-                toggle(_selector, $(this), status);
+                $this = $(this);
+                toggle(_selector, $this, $this.is($domiEl) ? domiElStatus : status);
             });
         }
 
@@ -93,6 +102,14 @@
             return ($domiEl.attr(_.attrFilters) || "").split(',');
         }
 
+        function getTriggers($domiEl) {
+            return ($domiEl.attr(_.attrTriggers) || "").split(',');
+        }
+
+        function getListeners($domiEl) {
+            return ($domiEl.attr(_.attrListeners) || "").split(',');
+        }
+
         function getToggleClass($domiEl) {
             return $domiEl.attr(_.attrToggleClass);
         }
@@ -105,13 +122,41 @@
             return $domiEl.attr(_.attrPriority) || "0";
         }
 
+        function triggerEvents($domiEl, status) {
+            var triggers = getTriggers($domiEl);
+            var sufix = status ? "--on" : "--off";
+
+            $.each(triggers, function(i, event){
+                if(!event) return;
+                _hub.trigger(event + sufix);
+            });
+        }
+
         function registerAsLoaded($domiEl) {
             var value = $domiEl.attr(_.attrElementLoaded);
+            var listeners = getListeners($domiEl);
 
             if(!value) {
                 $domiEl.attr(_.attrElementLoaded, true);
-                info.elementsLoaded++;
+                _info.elementsLoaded++;
             }
+
+            $.each(listeners, function(i, listener) {
+                var l = listener.split(":");
+
+                switch(l[0]) {
+                    case "on":
+                        _hub.on(l[1], function(event) {
+                            $domiEl.setActive(true);
+                        });
+                        break;
+                    case "off":
+                        _hub.on(l[1], function(event) {
+                            $domiEl.setActive(false);
+                        });
+                        break;
+                }
+            });
 
             return value
         }
@@ -141,7 +186,7 @@
         // 
         // usage:
         // 
-        // <div class="js-toggle" data-target="#menu" data-toggle-class="opened">
+        // <div class="js-tab" data-target="#menu" data-toggle-class="opened">
         function createTab(selector) {
             $(selector).each(function() {
                 var $el = $(this);
@@ -150,15 +195,17 @@
                     return
                 }
 
+                $el.setActive = function (newStatus) {
+                    toggleDomiEl(_.elTab, $el, false, newStatus);
+                }
+
                 registerToTarget(_.elTab, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
-                    var $this  = $(this);
-                    var status = $this.hasClass(_.statusActive);
+                    var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        toggleByGroupId(_.elTab, $this, false);
-                        toggle(_.elTab, $this, !status);
+                        $el.setActive(true); 
                     }
                 });
             });
@@ -179,14 +226,15 @@
                     return
                 }
 
+                $el.setActive = function (newStatus) {
+                    toggleDomiEl(_.elToggle, $el, false, newStatus);
+                }
+
                 registerToTarget(_.elToggle, $el, getTarget($el));
                 $el.on('click', function(e) {
                     e.preventDefault();
-                    var $this  = $(this);
-                    var status = $this.hasClass(_.statusActive);
-
-                    toggleByGroupId(_.elToggle, $this, false);
-                    toggle(_.elToggle, $this, !status);
+                    var status = $el.hasClass(_.statusActive);
+                    $el.setActive(!status);                    
                 });
             });
         }
@@ -216,6 +264,12 @@
 
                 if(registerAsLoaded($el)) {
                     return
+                }
+
+                $el.setActive = function (newStatus) {
+                    if(newStatus) {
+                        checkOverflowBoxes([$el]);
+                    }
                 }
 
                 _overflowBoxes.push($el);
@@ -259,16 +313,19 @@
                 $el.data('children', children);
             });
 
-            if(!info.isListeningResize && _overflowBoxes.length) {
-                $(window).resize(checkOverflowBoxes);
-                checkOverflowBoxes();
-                info.isListeningResize = true;
+            if(!_info.isListeningResize && _overflowBoxes.length) {
+                $(window).resize(onResize);
+                onResize()
+                _info.isListeningResize = true;
             }
         }
         
+        function onResize() {
+            checkOverflowBoxes();
+        }
 
-        function checkOverflowBoxes() {
-            $.each(_overflowBoxes, function(i, $container) {
+        function checkOverflowBoxes(overflowBoxes) {
+            $.each(overflowBoxes || _overflowBoxes, function(i, $container) {
                 var containerWidth = $container.width();
                 var $target        = getTarget($container);
                 var tmpWidth       = 0;
@@ -304,6 +361,7 @@
 
                 $container.toggleClass(_.statusActive, isTargetActive);
                 $target.toggleClass(_.statusActive, isTargetActive);
+                triggerEvents($target, isTargetActive);
             });
         }
 
@@ -323,27 +381,33 @@
                     return
                 }
 
+                // move this to a prototype
+                $el.setActive = function (newStatus) {
+                    var $target   = getTarget($el, 'body');
+                    var classData = getToggleClass($el);
+                    $target.toggleClass(classData, newStatus);
+                    $el.toggleClass(_.statusActive, newStatus);
+                    triggerEvents($el, newStatus);
+                }
+
                 _scrollTriggers.push($el);
             });
 
-            if(!info.isListeningScroll && _scrollTriggers.length) {
+            if(!_info.isListeningScroll && _scrollTriggers.length) {
                 $(window).scroll(checkScrollTriggers);
                 checkScrollTriggers();
-                info.isListeningScroll = true;
+                _info.isListeningScroll = true;
             }
         }
 
         function checkScrollTriggers() {
             var scroll = $(window).scrollTop();
             $.each(_scrollTriggers, function(i, $scrollTrigger) {
-                var classData     = getToggleClass($scrollTrigger);
                 var currentStatus = $scrollTrigger.hasClass(_.statusActive);
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    var $target = getTarget($scrollTrigger, 'body');
-                    $target.toggleClass(classData, newStatus);
-                    $scrollTrigger.toggleClass(_.statusActive, newStatus);
+                    $scrollTrigger.setActive(newStatus);
                 }
             });
         }
@@ -365,7 +429,8 @@
             });
         }
 
-        $.fn.domi.status = info;
+        $.fn.domi.status = _info;
+        $.fn.domi.hub = _hub;
 
         // run for all the body elements by default
         $('body').domi();
