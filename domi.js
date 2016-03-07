@@ -21,7 +21,7 @@
             _.attrTarget          = _.attrPrefix + "target";
             _.attrToggleClass     = _.attrPrefix + "toggle-class";
             _.attrGroupId         = _.attrPrefix + "group-id";
-            _.attrUniqueGroup     = _.attrPrefix + "unique-group-id";
+            _.attrShareStatusId     = _.attrPrefix + "share-status-id";
             _.attrScope           = _.attrPrefix + "scope";
             _.attrPriority        = _.attrPrefix + "priority";
             _.attrFilters         = _.attrPrefix + "filters";
@@ -87,7 +87,7 @@
         }
 
         function getListeners($domiEl) {
-            return ($domiEl.attr(_.attrListeners) || "").split(',');
+            return ($domiEl.attr(_.attrListeners) || "").split(' ');
         }
 
         function getToggleClass($domiEl) {
@@ -98,8 +98,8 @@
             return $domiEl.attr(_.attrGroupId);
         }
 
-        function getUniqueGroupId($domiEl) {
-            return $domiEl.attr(_.attrUniqueGroup);
+        function getShareStatusId($domiEl) {
+            return $domiEl.attr(_.attrShareStatusId);
         }
 
         function getPriority($domiEl) {
@@ -119,8 +119,8 @@
                 var groupId = getGroupId($domiEl);
                 groupId && _hub.trigger("group:" + groupId, $domiEl, status);
 
-                var uniqueGroupId = getUniqueGroupId($domiEl);
-                uniqueGroupId && _hub.trigger("unique-group:" + uniqueGroupId, $domiEl, status);
+                var shareStatusId = getShareStatusId($domiEl);
+                shareStatusId && _hub.trigger("share-status:" + shareStatusId, $domiEl, status);
             }
         }
 
@@ -136,22 +136,22 @@
 
             var listeners = getListeners($domiEl);
             var groupId = getGroupId($domiEl);
-            var uniqueGroupId = getUniqueGroupId($domiEl);
+            var shareStatusId = getShareStatusId($domiEl);
 
             groupId && _hub.on("group:" + groupId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
                 console.log($domiEl.is($domiElSender));
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.setActive(status, true);
+                    $domiEl.setActive(false, true);
                 }
             });
 
 
-            uniqueGroupId && _hub.on("unique-group:" + uniqueGroupId, function(event, $domiElSender, status) {
+            shareStatusId && _hub.on("share-status:" + shareStatusId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
                 console.log($domiEl.is($domiElSender));
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.setActive(false, true);
+                    $domiEl.setActive(status, true);
                 }
             });
 
