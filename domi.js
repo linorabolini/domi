@@ -142,18 +142,15 @@
 
             groupId && _hub.on("group:" + groupId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
-                console.log($domiEl.is($domiElSender));
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.setActive(false, true);
+                    $domiEl.trigger('setActive', [false, true]);
                 }
             });
 
-
             shareStatusId && _hub.on("share-status:" + shareStatusId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
-                console.log($domiEl.is($domiElSender));
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.setActive(status, true);
+                    $domiEl.trigger('setActive', [status, true]);
                 }
             });
 
@@ -164,13 +161,13 @@
                     case "on":
                         _hub.on(l[1], function(event) {
                             console.log(event.type + " triggered");
-                            $domiEl.setActive(true, false);
+                            $domiEl.trigger('setActive', [true, false]);
                         });
                         break;
                     case "off":
                         _hub.on(l[1], function(event) {
                             console.log(event.type + " triggered");
-                            $domiEl.setActive(false, false);
+                            $domiEl.trigger('setActive', [false, false]);
                         });
                         break;
                 }
@@ -192,16 +189,16 @@
                     return
                 }
 
-                $el.setActive = function (newStatus, silent) {
+                $el.on('setActive', function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
-                }
+                });
 
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        $el.setActive(true, false); 
+                        $el.trigger('setActive', [true, false]); 
                     }
                 });
             });
@@ -222,15 +219,15 @@
                     return
                 }
 
-                $el.setActive = function (newStatus, silent) {
+                $el.on('setActive', function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
-                }
+                });
 
                 $el.on('click', function(e) {
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
-                    $el.setActive(!status, false);                    
+                    $el.trigger('setActive', [!status, false]);
                 });
             });
         }
@@ -262,11 +259,11 @@
                     return
                 }
 
-                $el.setActive = function (newStatus, silent) {
+                $el.on('setActive', function(e, newStatus, silent) {
                     if(newStatus) {
                         checkOverflowBoxes([$el], silent);
                     }
-                }
+                });
 
                 _overflowBoxes.push($el);
 
@@ -378,13 +375,13 @@
                 }
 
                 // move this to a prototype
-                $el.setActive = function (newStatus, silent) {
+                $el.on('setActive', function(e, newStatus, silent) {
                     var $target   = getTarget($el, 'body');
                     var classData = getToggleClass($el);
                     $target.toggleClass(classData, newStatus);
                     $el.toggleClass(_.statusActive, newStatus);
                     triggerEvents($el, newStatus, silent);
-                }
+                });
 
                 _scrollTriggers.push($el);
             });
@@ -403,7 +400,7 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    $scrollTrigger.setActive(newStatus, false);
+                    $scrollTrigger.trigger('setActive', [newStatus, false]);
                 }
             });
         }
