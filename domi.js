@@ -114,15 +114,15 @@
 
             $.each(triggers, function(i, event){
                 if(!event) return;
-                _hub.trigger(event + sufix);
+                _hub.trigger(ns(event + sufix));
             });
 
             if (!silent) {
                 var groupId = getGroupId($domiEl);
-                groupId && _hub.trigger("group:" + groupId + _.eventNamespace, [$domiEl, status]);
+                groupId && _hub.trigger(ns("group:" + groupId), [$domiEl, status]);
 
                 var shareStatusId = getShareStatusId($domiEl);
-                shareStatusId && _hub.trigger("share-status:" + shareStatusId + _.eventNamespace, [$domiEl, status]);
+                shareStatusId && _hub.trigger(ns("share-status:" + shareStatusId), [$domiEl, status]);
             }
         }
 
@@ -140,17 +140,17 @@
             var groupId = getGroupId($domiEl);
             var shareStatusId = getShareStatusId($domiEl);
 
-            groupId && _hub.on("group:" + groupId + _.eventNamespace, function(event, $domiElSender, status) {
+            groupId && _hub.on(ns("group:" + groupId), function(event, $domiElSender, status) {
                 // console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('setActive' + _.eventNamespace, [false, true]);
+                    $domiEl.trigger(ns('setStatus'), [false, true]);
                 }
             });
 
-            shareStatusId && _hub.on("share-status:" + shareStatusId + _.eventNamespace, function(event, $domiElSender, status) {
+            shareStatusId && _hub.on(ns("share-status:" + shareStatusId), function(event, $domiElSender, status) {
                 // console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('setActive' + _.eventNamespace, [status, true]);
+                    $domiEl.trigger(ns('setStatus'), [status, true]);
                 }
             });
 
@@ -159,15 +159,15 @@
 
                 switch(l[0]) {
                     case "on":
-                        _hub.on(l[1], function(event) {
+                        _hub.on(ns(l[1]), function(event) {
                             // console.log(event.type + " triggered");
-                            $domiEl.trigger('setActive' + _.eventNamespace, [true, false]);
+                            $domiEl.trigger(ns('setStatus'), [true, false]);
                         });
                         break;
                     case "off":
-                        _hub.on(l[1], function(event) {
+                        _hub.on(ns(l[1]), function(event) {
                             // console.log(event.type + " triggered");
-                            $domiEl.trigger('setActive' + _.eventNamespace, [false, false]);
+                            $domiEl.trigger(ns('setStatus'), [false, false]);
                         });
                         break;
                 }
@@ -189,8 +189,8 @@
                     return
                 }
 
-                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
-                    // console.log("setActive:" , newStatus)
+                $el.on(ns('setStatus'), function(e, newStatus, silent) {
+                    // console.log("setStatus:" , newStatus)
                     toggle($el, newStatus, silent);
                 });
 
@@ -199,7 +199,7 @@
                     var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        $el.trigger('setActive' + _.eventNamespace, [true, false]); 
+                        $el.trigger(ns('setStatus'), [true, false]); 
                     }
                 });
             });
@@ -220,7 +220,7 @@
                     return
                 }
 
-                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
+                $el.on(ns('setStatus'), function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
                 });
 
@@ -228,7 +228,7 @@
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
-                    $el.trigger('setActive' + _.eventNamespace, [!status, false]);
+                    $el.trigger(ns('setStatus'), [!status, false]);
                 });
             });
         }
@@ -260,7 +260,7 @@
                     return
                 }
 
-                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
+                $el.on(ns('setStatus'), function(e, newStatus, silent) {
                     if(newStatus) {
                         checkOverflowBoxes([$el], silent);
                     }
@@ -360,7 +360,7 @@
                 }
 
                 // move this to a prototype
-                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
+                $el.on(ns('setStatus'), function(e, newStatus, silent) {
                     var $target   = getTarget($el, 'body');
                     var classData = getToggleClass($el);
                     $target.toggleClass(classData, newStatus);
@@ -385,7 +385,7 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    $scrollTrigger.trigger('setActive' + _.eventNamespace, [newStatus, false]);
+                    $scrollTrigger.trigger(ns('setStatus'), [newStatus, false]);
                 }
             });
         }
@@ -429,6 +429,10 @@
                     }
                 }
             } while (swapped);
+        }
+
+        function ns(str) { // event namespace
+            return str + _.eventNamespace;
         }
 
         // entry point      
