@@ -21,7 +21,7 @@
             _.attrTarget          = _.attrPrefix + "target";
             _.attrToggleClass     = _.attrPrefix + "toggle-class";
             _.attrGroupId         = _.attrPrefix + "group-id";
-            _.attrShareStatusId     = _.attrPrefix + "share-status-id";
+            _.attrShareStatusId   = _.attrPrefix + "share-status-id";
             _.attrScope           = _.attrPrefix + "scope";
             _.attrPriority        = _.attrPrefix + "priority";
             _.attrFilters         = _.attrPrefix + "filters";
@@ -49,8 +49,10 @@
             var $target = getTarget($domiEl);
             var classData  = getToggleClass($domiEl);
 
-            $target.toggleClass(classData, status);
+            !silent && $target.toggleClass(classData, status);
+
             $domiEl.toggleClass(_.statusActive, status);
+
             triggerEvents($domiEl, status, silent);
         }
 
@@ -117,10 +119,10 @@
 
             if (!silent) {
                 var groupId = getGroupId($domiEl);
-                groupId && _hub.trigger("group:" + groupId, $domiEl, status);
+                groupId && _hub.trigger("group:" + groupId, [$domiEl, status]);
 
                 var shareStatusId = getShareStatusId($domiEl);
-                shareStatusId && _hub.trigger("share-status:" + shareStatusId, $domiEl, status);
+                shareStatusId && _hub.trigger("share-status:" + shareStatusId, [$domiEl, status]);
             }
         }
 
