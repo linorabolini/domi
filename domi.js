@@ -30,6 +30,7 @@
             _.attrElementLoaded   = _.attrPrefix + "loaded";
             _.statusPrefix        = "js--";
             _.statusActive        = _.statusPrefix + "active";
+            _.eventNamespace      = ".domi";
 
         var _info = {
             elementsLoaded: 0,
@@ -49,8 +50,7 @@
             var $target = getTarget($domiEl);
             var classData  = getToggleClass($domiEl);
 
-            !silent && $target.toggleClass(classData, status);
-
+            $target.toggleClass(classData, status);
             $domiEl.toggleClass(_.statusActive, status);
 
             triggerEvents($domiEl, status, silent);
@@ -119,10 +119,10 @@
 
             if (!silent) {
                 var groupId = getGroupId($domiEl);
-                groupId && _hub.trigger("domi.group:" + groupId, [$domiEl, status]);
+                groupId && _hub.trigger("group:" + groupId + _.eventNamespace, [$domiEl, status]);
 
                 var shareStatusId = getShareStatusId($domiEl);
-                shareStatusId && _hub.trigger("domi.share-status:" + shareStatusId, [$domiEl, status]);
+                shareStatusId && _hub.trigger("share-status:" + shareStatusId + _.eventNamespace, [$domiEl, status]);
             }
         }
 
@@ -140,17 +140,17 @@
             var groupId = getGroupId($domiEl);
             var shareStatusId = getShareStatusId($domiEl);
 
-            groupId && _hub.on("domi.group:" + groupId, function(event, $domiElSender, status) {
-                console.log(event.type + " triggered");
+            groupId && _hub.on("group:" + groupId + _.eventNamespace, function(event, $domiElSender, status) {
+                // console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('domi.setActive', [false, true]);
+                    $domiEl.trigger('setActive' + _.eventNamespace, [false, true]);
                 }
             });
 
-            shareStatusId && _hub.on("domi.share-status:" + shareStatusId, function(event, $domiElSender, status) {
-                console.log(event.type + " triggered");
+            shareStatusId && _hub.on("share-status:" + shareStatusId + _.eventNamespace, function(event, $domiElSender, status) {
+                // console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('domi.setActive', [status, true]);
+                    $domiEl.trigger('setActive' + _.eventNamespace, [status, true]);
                 }
             });
 
@@ -160,14 +160,14 @@
                 switch(l[0]) {
                     case "on":
                         _hub.on(l[1], function(event) {
-                            console.log(event.type + " triggered");
-                            $domiEl.trigger('domi.setActive', [true, false]);
+                            // console.log(event.type + " triggered");
+                            $domiEl.trigger('setActive' + _.eventNamespace, [true, false]);
                         });
                         break;
                     case "off":
                         _hub.on(l[1], function(event) {
-                            console.log(event.type + " triggered");
-                            $domiEl.trigger('domi.setActive', [false, false]);
+                            // console.log(event.type + " triggered");
+                            $domiEl.trigger('setActive' + _.eventNamespace, [false, false]);
                         });
                         break;
                 }
@@ -189,7 +189,8 @@
                     return
                 }
 
-                $el.on('domi.setActive', function(e, newStatus, silent) {
+                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
+                    // console.log("setActive:" , newStatus)
                     toggle($el, newStatus, silent);
                 });
 
@@ -198,7 +199,7 @@
                     var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        $el.trigger('domi.setActive', [true, false]); 
+                        $el.trigger('setActive' + _.eventNamespace, [true, false]); 
                     }
                 });
             });
@@ -219,7 +220,7 @@
                     return
                 }
 
-                $el.on('domi.setActive', function(e, newStatus, silent) {
+                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
                 });
 
@@ -227,7 +228,7 @@
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
-                    $el.trigger('domi.setActive', [!status, false]);
+                    $el.trigger('setActive' + _.eventNamespace, [!status, false]);
                 });
             });
         }
@@ -259,7 +260,7 @@
                     return
                 }
 
-                $el.on('domi.setActive', function(e, newStatus, silent) {
+                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
                     if(newStatus) {
                         checkOverflowBoxes([$el], silent);
                     }
@@ -359,7 +360,7 @@
                 }
 
                 // move this to a prototype
-                $el.on('domi.setActive', function(e, newStatus, silent) {
+                $el.on('setActive' + _.eventNamespace, function(e, newStatus, silent) {
                     var $target   = getTarget($el, 'body');
                     var classData = getToggleClass($el);
                     $target.toggleClass(classData, newStatus);
@@ -384,7 +385,7 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    $scrollTrigger.trigger('domi.setActive', [newStatus, false]);
+                    $scrollTrigger.trigger('setActive' + _.eventNamespace, [newStatus, false]);
                 }
             });
         }
