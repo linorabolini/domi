@@ -11,16 +11,17 @@
 
         .container {
             position: absolute;
-            width: 320px;
+            width: 100%;
             height: 300px;
             top: 0;
             bottom: 0;
             left: 0;
             right: 0;
-            margin: auto;        
             text-align: center;
+            margin: auto;        
         }
         .js-toggle {
+            display:inline-block;
             width: 140px;
             background-color: #ff0066;
             border-radius: 20px;
@@ -32,20 +33,10 @@
             color: #f1f1f1;
             margin-bottom: 30px;
             margin: 10px;
-            float: left;
+            transition: all 300ms;
         }
         .js--active {
             opacity: 0.5;
-        }
-
-        .js-toggle[data-group-id="size"] {
-            background-color: #ff0066;
-            border-bottom: 5px solid #FFB2D1;
-        }
-
-        .js-toggle[data-group-id="color"] {
-            background-color: #5f5f5f;
-            border-bottom: 5px solid #2d2d2d;
         }
 
         .active .js-toggle {
@@ -57,28 +48,14 @@
             margin-bottom: 30px;
         }
 
-        .toggle-contents {
-            text-align: center;
-        }
-
-        .toggle-content {
-            transition: all 300ms;
-            width: 70px;
-            height: 50px;
-            border-radius: 20px;
-            display: inline-block;
-            background-color: #ccc;
-            border-bottom: 5px solid #aaa;
-        }
-
         .small {
-            width: 40px;
+            width: 70px;
             height: 30px;
         }
 
         .big {
             width: 120px;
-            height: 100px;
+            height: 80px;
         }
 
         .green {
@@ -92,17 +69,13 @@
         }
 
 
-
     </style>
     <div class="container">
         <div class="toggles">
-            <div class="js-toggle" data-group-id="size" data-target="#toggle-content-1" data-toggle-class="big">.js-toggle big</div>
-            <div class="js-toggle" data-group-id="size" data-target="#toggle-content-1" data-toggle-class="small">.js-toggle small</div>
-            <div class="js-toggle" data-group-id="color" data-target="#toggle-content-1" data-toggle-class="green">.js-toggle green</div>
-            <div class="js-toggle" data-group-id="color" data-target="#toggle-content-1" data-toggle-class="yellow">.js-toggle yellow</div>
-        </div>
-        <div class="toggle-contents">
-            <div class="toggle-content" id="toggle-content-1"></div>           
+            <div class="js-toggle" data-target=".js-toggle" data-scope="closest" data-triggers="t1" data-toggle-class="big">.js-toggle big</div>
+            <div class="js-toggle" data-target=".js-toggle" data-scope="closest" data-listeners="on:t1--on off:t1--off" data-triggers="t2" data-toggle-class="small">.js-toggle small</div>
+            <div class="js-toggle" data-target=".js-toggle" data-scope="closest" data-listeners="on:t2--on off:t2--off" data-triggers="t3" data-toggle-class="green">.js-toggle green</div>
+            <div class="js-toggle" data-target=".js-toggle" data-scope="closest" data-listeners="on:t3--on off:t3--off" data-toggle-class="yellow">.js-toggle yellow</div>
         </div>
     </div>
 </body>
