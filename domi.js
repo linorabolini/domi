@@ -119,10 +119,10 @@
 
             if (!silent) {
                 var groupId = getGroupId($domiEl);
-                groupId && _hub.trigger("group:" + groupId, [$domiEl, status]);
+                groupId && _hub.trigger("domi.group:" + groupId, [$domiEl, status]);
 
                 var shareStatusId = getShareStatusId($domiEl);
-                shareStatusId && _hub.trigger("share-status:" + shareStatusId, [$domiEl, status]);
+                shareStatusId && _hub.trigger("domi.share-status:" + shareStatusId, [$domiEl, status]);
             }
         }
 
@@ -140,17 +140,17 @@
             var groupId = getGroupId($domiEl);
             var shareStatusId = getShareStatusId($domiEl);
 
-            groupId && _hub.on("group:" + groupId, function(event, $domiElSender, status) {
+            groupId && _hub.on("domi.group:" + groupId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('setActive', [false, true]);
+                    $domiEl.trigger('domi.setActive', [false, true]);
                 }
             });
 
-            shareStatusId && _hub.on("share-status:" + shareStatusId, function(event, $domiElSender, status) {
+            shareStatusId && _hub.on("domi.share-status:" + shareStatusId, function(event, $domiElSender, status) {
                 console.log(event.type + " triggered");
                 if(!$domiEl.is($domiElSender)) {
-                    $domiEl.trigger('setActive', [status, true]);
+                    $domiEl.trigger('domi.setActive', [status, true]);
                 }
             });
 
@@ -161,13 +161,13 @@
                     case "on":
                         _hub.on(l[1], function(event) {
                             console.log(event.type + " triggered");
-                            $domiEl.trigger('setActive', [true, false]);
+                            $domiEl.trigger('domi.setActive', [true, false]);
                         });
                         break;
                     case "off":
                         _hub.on(l[1], function(event) {
                             console.log(event.type + " triggered");
-                            $domiEl.trigger('setActive', [false, false]);
+                            $domiEl.trigger('domi.setActive', [false, false]);
                         });
                         break;
                 }
@@ -189,7 +189,7 @@
                     return
                 }
 
-                $el.on('setActive', function(e, newStatus, silent) {
+                $el.on('domi.setActive', function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
                 });
 
@@ -198,7 +198,7 @@
                     var status = $el.hasClass(_.statusActive);
 
                     if(!status) {
-                        $el.trigger('setActive', [true, false]); 
+                        $el.trigger('domi.setActive', [true, false]); 
                     }
                 });
             });
@@ -219,7 +219,7 @@
                     return
                 }
 
-                $el.on('setActive', function(e, newStatus, silent) {
+                $el.on('domi.setActive', function(e, newStatus, silent) {
                     toggle($el, newStatus, silent);
                 });
 
@@ -227,7 +227,7 @@
                     e.preventDefault();
                     var status = $el.hasClass(_.statusActive);
 
-                    $el.trigger('setActive', [!status, false]);
+                    $el.trigger('domi.setActive', [!status, false]);
                 });
             });
         }
@@ -259,7 +259,7 @@
                     return
                 }
 
-                $el.on('setActive', function(e, newStatus, silent) {
+                $el.on('domi.setActive', function(e, newStatus, silent) {
                     if(newStatus) {
                         checkOverflowBoxes([$el], silent);
                     }
@@ -284,22 +284,6 @@
 
                     $current.data('data-left-node', $min);
                 });
-
-
-                function bubbleSort(a) {
-                    var swapped;
-                    do {
-                        swapped = false;
-                        for (var i=0; i < a.length-1; i++) {
-                            if (getPriority($(a[i])) > getPriority($(a[i+1]))) {
-                                var temp = a[i];
-                                a[i] = a[i+1];
-                                a[i+1] = temp;
-                                swapped = true;
-                            }
-                        }
-                    } while (swapped);
-                }
                  
                 bubbleSort(children);
                 
@@ -308,7 +292,7 @@
 
             if(!_info.isListeningResize && _overflowBoxes.length) {
                 $(window).resize(onResize);
-                onResize()
+                onResize();
                 _info.isListeningResize = true;
             }
         }
@@ -375,7 +359,7 @@
                 }
 
                 // move this to a prototype
-                $el.on('setActive', function(e, newStatus, silent) {
+                $el.on('domi.setActive', function(e, newStatus, silent) {
                     var $target   = getTarget($el, 'body');
                     var classData = getToggleClass($el);
                     $target.toggleClass(classData, newStatus);
@@ -400,9 +384,50 @@
                 var newStatus     = $scrollTrigger.offset().top + $scrollTrigger.outerHeight(true) < scroll;
 
                 if(currentStatus != newStatus) {
-                    $scrollTrigger.trigger('setActive', [newStatus, false]);
+                    $scrollTrigger.trigger('domi.setActive', [newStatus, false]);
                 }
             });
+        }
+
+        // utility functions
+        // 
+        
+        function throttle(func, ms){
+            var last = 0;
+            return function(){
+                var a = arguments, t = this, now = +(new Date);
+                //b/c last = 0 will still run the first time called
+                if(now >= last + ms){
+                    last = now;
+                    func.apply(t, a);
+                }
+            }
+        }
+
+        function debounce(func, ms) {
+          var timer = null;
+          return function () {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+              func.apply(context, args);
+            }, ms);
+          };
+        }
+
+        function bubbleSort(a) {
+            var swapped;
+            do {
+                swapped = false;
+                for (var i=0; i < a.length-1; i++) {
+                    if (getPriority($(a[i])) > getPriority($(a[i+1]))) {
+                        var temp = a[i];
+                        a[i] = a[i+1];
+                        a[i+1] = temp;
+                        swapped = true;
+                    }
+                }
+            } while (swapped);
         }
 
         // entry point      
